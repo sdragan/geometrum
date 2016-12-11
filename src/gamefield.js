@@ -33,6 +33,7 @@ var GamefieldScene = cc.Scene.extend({
         this.initLayers();
         this.initEffects();
         this.initPhysics();
+        // this.initDebugMode();
         this.scheduleUpdate();
     },
 
@@ -71,6 +72,11 @@ var GamefieldScene = cc.Scene.extend({
         this.space.sleepTimeThreshold = Infinity;
         this.space.collisionSlop = Infinity;
         this.space.addCollisionHandler(CollisionTypes.COMMON, CollisionTypes.COMMON, this.collisionHandler.bind(this), null, null, null);
+    },
+
+    initDebugMode: function () {
+        var phDebugNode = cc.PhysicsDebugNode.create(this.space);
+        this.addChild(phDebugNode, 10);
     },
 
     collisionHandler: function (arbiter, space) {
