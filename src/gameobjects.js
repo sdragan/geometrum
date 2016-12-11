@@ -92,14 +92,14 @@ var LevelObject = function () {
         }
     }
 
-    this.remove = function () {
-        var space = this.body.space;
+    this.remove = function (space) {
 
-        if (space != null) {
-            while (this.body.shapeList.length > 0) {
-                space.removeShape(body.shapeList[0]);
-            }
-            space.removeBody(body);
+        while (this.body.shapeList.length > 0) {
+            space.removeShape(this.body.shapeList[0]);
+        }
+
+        if (this.body.space != null) {
+            space.removeBody(this.body);
         }
 
         if (this.sprite != null) {
@@ -190,6 +190,7 @@ var LevelObjectsFactory = {
             userData.nextSkins = this.NEXT_SKINS_BY_SKIN[skin]
         }
         body.userData = userData;
+        return body;
     },
 
     addCrystal: function (crystalX, crystalY, angle, spriteName, isStatic, blockType, space, container, nextSkins, areaSpriteContainer) {

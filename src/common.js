@@ -98,5 +98,7 @@ var GameParticleManager = {
 
 var GameConstants = {
     MAGNET_STRENGTH: 12,
-    GOD_MOD_TIME: 0.15
+    GOD_MOD_TIME: 0.15,
+    PADDLE_MAX_LENGTH: 150,
+    PADDLE_MAX_Y: 300
 };
