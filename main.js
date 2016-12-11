@@ -63,7 +63,18 @@ cc.game.onStart = function(){
     cc.view.resizeWithBrowserSize(true);
 
     cc.LoaderScene.preload(g_resources, function () {
-        cc.director.runScene(new GamefieldScene());
+
+        var texture = cc.textureCache.addImage(res.spritesheet_png);
+        cc.spriteFrameCache.addSpriteFrames(res.spritesheet_plist, texture);
+        gcp.ShapeCache.getInstance().addShapesWithFile(res.physics_bodies_plist);
+
+        GameStateModel.init();
+        GameSoundManager.init();
+        GameParticleManager.init();
+
+        var gamefieldScene = new GamefieldScene();
+        cc.director.runScene(gamefieldScene);
+        gamefieldScene.setup();
     }, this);
 };
 cc.game.run();

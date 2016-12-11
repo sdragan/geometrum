@@ -1,4 +1,9 @@
-var GameStateModel = {};
+var GameStateModel = {
+
+    init: function () {
+
+    }
+};
 
 var MathUtils = {
 
@@ -85,7 +90,11 @@ var GameSoundManager = {
     }
 };
 
-var GameParticleManager = {};
+var GameParticleManager = {
+    init: function () {
+
+    }
+};
 
 var GameConstants = {
     MAGNET_STRENGTH: 12,

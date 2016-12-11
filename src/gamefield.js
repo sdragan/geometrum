@@ -1,5 +1,6 @@
 var GamefieldScene = cc.Scene.extend({
 
+    space: null,
     bodiesToRemove: null,
     blocks: null,
     balls: null,
@@ -10,18 +11,29 @@ var GamefieldScene = cc.Scene.extend({
     containerArea: null,
     containerLevelObjects: null,
     containerParticles: null,
-    touchDrawNode: null,
+    drawNodeTouch: null,
+
+    effectFlash: null,
+    effectScreenshake: null,
+    effectTintLevelObjects: null,
+
+    blocksHitInRow: 0,
 
     initVars: function () {
+        this.space = null;
         this.bodiesToRemove = [];
         this.blocks = [];
         this.balls = [];
         this.blocksLeft = 0;
+        this.blocksHitInRow = 0;
     },
 
     setup: function () {
         this.initVars();
         this.initLayers();
+        this.initEffects();
+        this.initPhysics();
+        this.scheduleUpdate();
     },
 
     initLayers: function () {
@@ -37,43 +49,59 @@ var GamefieldScene = cc.Scene.extend({
         this.containerFg.addChild(this.containerLevelObjects);
         this.containerFg.addChild(this.containerParticles);
 
-        this.touchDrawNode = new cc.DrawNode();
-        this.addChild(this.touchDrawNode);
+        this.drawNodeTouch = new cc.DrawNode();
+        this.addChild(this.drawNodeTouch);
 
         var bg = GameSpriteManager.getSprite("game_bg");
         bg.setAnchorPoint(cc.p(0, 0));
-        this.bgContainer.addChild(bg);
+        this.containerBg.addChild(bg);
+    },
 
+    initEffects: function () {
+        this.effectFlash = new VisualEffectFlash(this);
+        this.effectScreenshake = new VisualEffectScreenshake(this);
+        this.effectTintLevelObjects = new VisualEffectTintLevelObjects(this);
+    },
 
+    initPhysics: function () {
+        this.space = new cp.Space();
+        this.space.gravity = cp.v(0, 0);
+        this.space.iterations = 30;
+        this.space.sleepTimeThreshold = Infinity;
+        this.space.collisionSlop = Infinity;
+        this.space.addCollisionHandler(CollisionTypes.COMMON, CollisionTypes.COMMON, this.collisionHandler.bind(this), null, null, null);
+    },
 
-            this.bgContainer = new cc.Node();
-            this.addChild(this.bgContainer);
-            this.fgContainer = new cc.Node();
-            this.addChild(this.fgContainer);
-            this.areaSpriteContainer = new cc.Node();
-            this.fgContainer.addChild(this.areaSpriteContainer);
-            this.fgContainer.setAnchorPoint(cc.p(0, 0));
-            this.ballParticlesContainer = new cc.Node();
-            this.fgContainer.addChild(this.ballParticlesContainer);
-            var bg = GameSpriteManager.getSprite("game_bg");
-            bg.setAnchorPoint(cc.p(0, 0));
-            this.bgContainer.addChild(bg);
-            this.touchZoneSprite = GameSpriteManager.getSprite("TouchZone");
-            this.touchZoneSprite.setAnchorPoint(0, 0);
-            this.touchZoneSprite.setOpacity(0);
-            this.bgContainer.addChild(this.touchZoneSprite);
-            GameParticleManager.addBgParticles(this.bgContainer);
-            this.overlayDrawNode = cc.DrawNode.create();
-            this.addChild(this.overlayDrawNode);
-            this.uiContainer = new cc.Node();
-            this.addChild(this.uiContainer);
-            this.touchDrawNode = cc.DrawNode.create();
-            this.addChild(this.touchDrawNode);
-            this.drawNode = cc.DrawNode.create();
-            this.addChild(this.drawNode);
-            this.flashGradientLayer = new cc.LayerGradient(cc.color(255, 255, 255), cc.color(255, 255, 255));
+    collisionHandler: function (arbiter, space) {
+        var levelObjectA = arbiter.a.body.userData;
+        var levelObjectB = arbiter.b.body.userData;
 
-            this.screenshake = new Screenshake(this.fgContainer);
+        if ((levelObjectA.tag == Tags.PADDLE && levelObjectB.tag != Tags.BALL) ||
+            (levelObjectB.tag == Tags.PADDLE && levelObjectA.tag != Tags.BALL)) {
+            return false;
+        }
+
+        if (levelObjectA.tag == Tags.BALL) {
+            if (levelObjectB.tag == Tags.BLOCK) {
+                arbiter.b.body.userData.processHit(arbiter.a.body, this);
+            }
+            else if (levelObjectB.tag == Tags.PADDLE) {
+                this.processPaddleHit(arbiter.b.body, arbiter.a.body);
+            }
+        }
+        else if (levelObjectB.tag == Tags.BALL) {
+            if (levelObjectA.tag == Tags.BLOCK) {
+                arbiter.a.body.userData.processHit(arbiter.b.body, this);
+            }
+            else if (levelObjectA.tag == Tags.PADDLE) {
+                this.processPaddleHit(arbiter.a.body, arbiter.b.body);
+            }
+        }
+        return true;
+    },
+
+    processPaddleHit: function (paddle) {
+        this.blocksHitInRow = 0;
     },
 
     processBlockDestroyed: function (levelObject) {

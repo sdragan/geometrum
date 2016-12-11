@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+    <key>metadata</key>
+        <dict>
+            <key>format</key>
+            <integer>1</integer>
+        </dict>
+        <key>scale_factor</key>
+        <real>1</real>
+        <key>category_names</key>
+        <array>
+        </array>         
+        <key>bodies</key>
+        <dict>
+
+            <key>Crystal_1</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+                        
+                        
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 60.00000,0.00000 }</string>
+                                <string>{ 0.00000,0.00000 }</string>
+                                <string>{ 29.00000,52.00000 }</string>
+                            </array>
+                        </array>
+                        
+                        
+                    </dict>
+
+                </array>
+            </dict>
+
+            <key>Crystal_2</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+                        
+                        
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 60.00000,52.00000 }</string>
+                                <string>{ 30.00000,0.00000 }</string>
+                                <string>{ 0.00000,52.00000 }</string>
+                                <string>{ 30.00000,104.00000 }</string>
+                            </array>
+                        </array>
+                        
+                        
+                    </dict>
+
+                </array>
+            </dict>
+
+            <key>Crystal_3</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+                        
+                        
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 0.00000,0.00000 }</string>
+                                <string>{ 0.00000,60.00000 }</string>
+                                <string>{ 60.00000,60.00000 }</string>
+                                <string>{ 60.00000,0.00000 }</string>
+                            </array>
+                        </array>
+                        
+                        
+                    </dict>
+
+                </array>
+            </dict>
+
+            <key>Crystal_4</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+                        
+                        
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 15.00000,26.00000 }</string>
+                                <string>{ 45.00000,26.00000 }</string>
+                                <string>{ 60.00000,0.00000 }</string>
+                                <string>{ 0.00000,0.00000 }</string>
+                            </array>
+                        </array>
+                        
+                        
+                    </dict>
+
+                </array>
+            </dict>
+
+            <key>Crystal_5</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+
+
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 45.00000,52.00000 }</string>
+                                <string>{ 60.00000,26.00000 }</string>
+                                <string>{ 45.00000,0.00000 }</string>
+                                <string>{ 15.00000,0.00000 }</string>
+                                <string>{ 0.00000,26.00000 }</string>
+                                <string>{ 15.00000,52.00000 }</string>
+                            </array>
+                        </array>
+
+
+                    </dict>
+
+                </array>
+            </dict>
+
+            <key>Block_Tough_1_hp3</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+
+
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 18.00000,0.00000 }</string>
+                                <string>{ 0.00000,33.00000 }</string>
+                                <string>{ 18.00000,66.00000 }</string>
+                                <string>{ 54.00000,66.00000 }</string>
+                                <string>{ 72.00000,33.00000 }</string>
+                                <string>{ 55.00000,0.00000 }</string>
+                            </array>
+                        </array>
+
+
+                    </dict>
+
+                </array>
+            </dict>
+
+            <key>Block_Unbreakable_1</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+
+
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 58.00000,46.00000 }</string>
+                                <string>{ 29.00000,0.00000 }</string>
+                                <string>{ 0.00000,46.00000 }</string>
+                                <string>{ 29.00000,92.00000 }</string>
+                            </array>
+                        </array>
+
+
+                    </dict>
+
+                </array>
+            </dict>
+
+            <key>Block_Normal_1</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+
+
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 0.00000,13.00000 }</string>
+                                <string>{ 30.00000,64.00000 }</string>
+                                <string>{ 42.00000,64.00000 }</string>
+                                <string>{ 72.00000,13.00000 }</string>
+                                <string>{ 72.00000,0.00000 }</string>
+                                <string>{ 0.00000,0.00000 }</string>
+                            </array>
+                        </array>
+
+
+                    </dict>
+
+                </array>
+            </dict>
+
+            <key>Block_Antimagnet_1_hp3</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+
+
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 60.00000,12.00000 }</string>
+                                <string>{ 54.00000,6.00000 }</string>
+                                <string>{ 1.00000,45.00000 }</string>
+                                <string>{ 7.00000,55.00000 }</string>
+                                <string>{ 15.00000,62.00000 }</string>
+                                <string>{ 54.00000,60.00000 }</string>
+                                <string>{ 65.00000,41.00000 }</string>
+                                <string>{ 66.00000,25.00000 }</string>
+                            </array>
+                            <array>
+                                <string>{ 54.00000,60.00000 }</string>
+                                <string>{ 15.00000,62.00000 }</string>
+                                <string>{ 41.00000,66.00000 }</string>
+                            </array>
+                            <array>
+                                <string>{ 1.00000,25.00000 }</string>
+                                <string>{ 1.00000,45.00000 }</string>
+                                <string>{ 54.00000,6.00000 }</string>
+                                <string>{ 42.00000,0.00000 }</string>
+                                <string>{ 24.00000,0.00000 }</string>
+                                <string>{ 12.00000,6.00000 }</string>
+                                <string>{ 4.00000,15.00000 }</string>
+                            </array>
+                            <array>
+                                <string>{ 65.00000,41.00000 }</string>
+                                <string>{ 54.00000,60.00000 }</string>
+                                <string>{ 61.00000,52.00000 }</string>
+                            </array>
+                        </array>
+
+
+                    </dict>
+
+                </array>
+            </dict>
+
+            <key>Block_Magnet_1_hp3</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+
+
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 60.00000,12.00000 }</string>
+                                <string>{ 54.00000,6.00000 }</string>
+                                <string>{ 1.00000,45.00000 }</string>
+                                <string>{ 7.00000,55.00000 }</string>
+                                <string>{ 15.00000,62.00000 }</string>
+                                <string>{ 54.00000,60.00000 }</string>
+                                <string>{ 65.00000,41.00000 }</string>
+                                <string>{ 66.00000,25.00000 }</string>
+                            </array>
+                            <array>
+                                <string>{ 54.00000,60.00000 }</string>
+                                <string>{ 15.00000,62.00000 }</string>
+                                <string>{ 41.00000,66.00000 }</string>
+                            </array>
+                            <array>
+                                <string>{ 1.00000,25.00000 }</string>
+                                <string>{ 1.00000,45.00000 }</string>
+                                <string>{ 54.00000,6.00000 }</string>
+                                <string>{ 42.00000,0.00000 }</string>
+                                <string>{ 24.00000,0.00000 }</string>
+                                <string>{ 12.00000,6.00000 }</string>
+                                <string>{ 4.00000,15.00000 }</string>
+                            </array>
+                            <array>
+                                <string>{ 65.00000,41.00000 }</string>
+                                <string>{ 54.00000,60.00000 }</string>
+                                <string>{ 61.00000,52.00000 }</string>
+                            </array>
+                        </array>
+
+
+                    </dict>
+
+                </array>
+            </dict>
+
+            <key>Block_Dangerous_1</key>
+            <dict>
+                <key>anchorpoint</key>
+                <string>{ 0.50000,0.50000 }</string>
+                <key>is_static</key>
+                <false/>
+                <key>affected_by_gravity</key>
+                <true/>
+                <key>allows_rotation</key>
+                <true/>
+                <key>fixtures</key>
+                <array>
+
+                    <dict>
+                        <key>mass</key>
+                        <real>1</real>
+                        <key>elasticity</key>
+                        <real>0.2</real>
+                        <key>friction</key>
+                        <real>0.7</real>
+                        <key>surface_velocity</key>
+                        <string>{ 0.00000,0.00000 }</string>
+                        <key>corner_radius</key>
+                        <real>0</real>
+                        <key>collision_categories</key>
+                        <integer>0</integer>
+                        <key>collision_mask</key>
+                        <integer>0</integer>
+                        <key>collision_type</key>
+                        <string></string>
+                        <key>collision_group</key>
+                        <string></string>
+                        <key>is_sensor</key>
+                        <false/>
+
+
+                        <key>fixture_type</key>
+                        <string>POLYGON</string>
+                        <key>polygons</key>
+                        <array>
+                            <array>
+                                <string>{ 44.00000,18.00000 }</string>
+                                <string>{ 34.00000,6.00000 }</string>
+                                <string>{ 18.00000,6.00000 }</string>
+                                <string>{ 6.00000,17.00000 }</string>
+                                <string>{ 6.00000,31.00000 }</string>
+                                <string>{ 17.00000,44.00000 }</string>
+                                <string>{ 31.00000,44.00000 }</string>
+                                <string>{ 44.00000,34.00000 }</string>
+                            </array>
+                        </array>
+
+
+                    </dict>
+
+                </array>
+            </dict>
+
+        </dict>
+    </dict>
+</plist>
+
+
+
+

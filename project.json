@@ -14,8 +14,11 @@
     "jsList": [
         "src/resource.js",
         "src/common.js",
+        "src/gameobjects.js",
+        "src/gamefield.js",
         "src/GCpShapeCache.js",
         "src/ingameui.js",
-        "src/postlevelmenu.js"
+        "src/postlevelmenu.js",
+        "src/visualeffects.js"
     ]
 }
