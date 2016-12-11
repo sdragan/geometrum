@@ -170,12 +170,14 @@ var LevelObjectsFactory = {
 
         var sprite = GameSpriteManager.getPhSprite(skin);
         var body = this.createStaticBody();
-        body.setPos(cc.p(blockX, blockX));
+        body.setPos(cc.p(blockX, blockY));
         body.setAngle(MathUtils.degToRad(360 - angle));
+        sprite.setBody(body);
         var bd = bodyDefs[skin];
         sprite.setAnchorPoint(bd.anchorPoint);
         var nodeSize = sprite.getContentSize();
         var offset = cc.p(-nodeSize.width * bd.anchorPoint.x, -nodeSize.height * bd.anchorPoint.y);
+        var collisionType = CollisionTypes.COMMON;
         this.createPolyShape(space, body, bd, offset, collisionType);
         container.addChild(sprite);
 
