@@ -52,8 +52,9 @@ var GamefieldScene = cc.Scene.extend({
         this.drawNodeTouch = new cc.DrawNode();
         this.addChild(this.drawNodeTouch);
 
-        var bg = GameSpriteManager.getSprite("game_bg");
+        var bg = GameSpriteManager.getSprite("game_bg_small");
         bg.setAnchorPoint(cc.p(0, 0));
+        bg.setScale(2, 2);
         this.containerBg.addChild(bg);
     },
 
