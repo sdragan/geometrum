@@ -17,13 +17,6 @@ var GamefieldScene = cc.Scene.extend({
     effectScreenshake: null,
     effectTintLevelObjects: null,
 
-    /*
-     touchStartCoords: {x: 0, y: 0},
-     paddleEndCoords: {x: 0, y: 0},
-     paddle: null,
-     isPaddleBeingDrawn: false,
-     */
-
     blocksHitInRow: 0,
 
     initVars: function () {
@@ -40,12 +33,13 @@ var GamefieldScene = cc.Scene.extend({
         this.initLayers();
         this.initEffects();
         this.initPhysics();
-        Paddle.addListeners(this);
+        Paddle.init(this);
+        Paddle.addListeners();
         this.initDebugMode();
         this.scheduleUpdate();
 
-        var foo = LevelObjectsFactory.createBlock(149, 442, 0.00, "Block_Normal_1", this.space, this.containerFg);
-        console.log("ss");
+        var block = LevelObjectsFactory.createBlock(149, 442, 0.00, "Block_Normal_1", this.space, this.containerFg);
+        console.log("Gamefield initialized");
     },
 
     initLayers: function () {
@@ -139,7 +133,7 @@ var GamefieldScene = cc.Scene.extend({
 
     scheduleRemoveBody: function (bodyToRemove) {
         if (this.bodiesToRemove.indexOf(bodyToRemove) < 0) {
-            this.bodiesToRemove.push(bodyToRemove);
+            -this.bodiesToRemove.push(bodyToRemove);
         }
     },
 
@@ -170,31 +164,40 @@ var Paddle = {
     paddle: null,
     isPaddleBeingDrawn: false,
     splashCircle: null,
+    gamefield: null,
 
-    addListeners: function (gamefield) {
+    init: function (gamefield) {
+        this.touchStartCoords = {x: 0, y: 0};
+        this.paddleEndCoords = {x: 0, y: 0};
+        this.paddle = null;
+        this.isPaddleBeingDrawn = false;
+        this.gamefield = gamefield;
+    },
+
+    addListeners: function () {
         var that = this;
 
         cc.eventManager.addListener({
             event: cc.EventListener.TOUCH_ONE_BY_ONE,
             swallowTouches: true,
             onTouchBegan: function (touch, event) {
-                that.processTouchStarted(touch.getLocation().x, touch.getLocation().y, gamefield);
+                that.processTouchStarted(touch.getLocation().x, touch.getLocation().y);
                 return true;
             },
             onTouchMoved: function (touch, event) {
-                that.processTouchUpdated(touch.getLocation().x, touch.getLocation().y, gamefield)
+                that.processTouchUpdated(touch.getLocation().x, touch.getLocation().y)
             },
             onTouchEnded: function (touch, event) {
-                that.processTouchEnded(touch.getLocation().x, touch.getLocation().y, gamefield);
+                that.processTouchEnded(touch.getLocation().x, touch.getLocation().y);
             }
-        }, gamefield);
+        }, this.gamefield);
     },
 
-    removeListeners: function (gamefield) {
-        cc.eventManager.removeListeners(cc.EventListener.TOUCH_ONE_BY_ONE, gamefield);
+    removeListeners: function () {
+        cc.eventManager.removeListeners(cc.EventListener.TOUCH_ONE_BY_ON);
     },
 
-    processTouchStarted: function (touchX, touchY, gamefield) {
+    processTouchStarted: function (touchX, touchY) {
         if (touchY <= GameConstants.PADDLE_MAX_Y) {
             this.touchStartCoords.x = touchX;
             this.touchStartCoords.y = touchY;
@@ -203,7 +206,7 @@ var Paddle = {
             if (this.splashCircle == null) {
                 this.splashCircle = GameSpriteManager.getSprite("SplashCircle");
             }
-            gamefield.containerBg.addChild(this.splashCircle);
+            this.gamefield.containerBg.addChild(this.splashCircle);
             this.splashCircle.setPosition(this.touchStartCoords.x, this.touchStartCoords.y);
             this.resetSplashCircle();
             this.splashCircle.runAction(cc.spawn(cc.fadeOut(1), cc.scaleTo(1, 1)));
@@ -222,7 +225,7 @@ var Paddle = {
         }
     },
 
-    processTouchUpdated: function (touchX, touchY, gamefield) {
+    processTouchUpdated: function (touchX, touchY) {
         if (this.isPaddleBeingDrawn == false) {
             return;
         }
@@ -231,11 +234,11 @@ var Paddle = {
             touchY = GameConstants.PADDLE_MAX_Y;
         }
 
-        this.updatePaddleEndCoords(touchX, touchY, gamefield);
-        this.displayPaddleBeingDrawn(this.paddleEndCoords.x, this.paddleEndCoords.y, gamefield);
+        this.updatePaddleEndCoords(touchX, touchY, this.gamefield);
+        this.displayPaddleBeingDrawn(this.paddleEndCoords.x, this.paddleEndCoords.y, this.gamefield);
     },
 
-    updatePaddleEndCoords: function (paddleEndX, paddleEndY, gamefield) {
+    updatePaddleEndCoords: function (paddleEndX, paddleEndY) {
         var paddleLength = this.getPaddleLength(this.touchStartCoords.x, this.touchStartCoords.y, paddleEndX, paddleEndY);
         var d = GameConstants.PADDLE_MAX_LENGTH / paddleLength;
         if (d < 1) {
@@ -256,9 +259,9 @@ var Paddle = {
         return Math.sqrt((pX * pX) + (pY * pY));
     },
 
-    displayPaddleBeingDrawn: function (currentX, currentY, gamefield) {
-        gamefield.drawNodeTouch.clear();
-        gamefield.drawNodeTouch.drawSegment(new cp.v(this.touchStartCoords.x, this.touchStartCoords.y), new cp.v(currentX, currentY), LevelObjectsFactory.PADDLE_WIDTH, cc.color(255, 255, 255, 128));
+    displayPaddleBeingDrawn: function (currentX, currentY) {
+        this.gamefield.drawNodeTouch.clear();
+        this.gamefield.drawNodeTouch.drawSegment(new cp.v(this.touchStartCoords.x, this.touchStartCoords.y), new cp.v(currentX, currentY), LevelObjectsFactory.PADDLE_WIDTH, cc.color(255, 255, 255, 128));
     },
 
     processTouchEnded: function (touchX, touchY, gamefield) {
@@ -266,7 +269,7 @@ var Paddle = {
             return;
         }
         this.isPaddleBeingDrawn = false;
-        gamefield.drawNodeTouch.clear();
+        this.gamefield.drawNodeTouch.clear();
         this.removeSplashCircle();
 
         if (touchY > this.PADDLE_MAX_Y) {
@@ -279,19 +282,19 @@ var Paddle = {
             this.removePaddle(gamefield);
         }
 
-        this.paddle = LevelObjectsFactory.addPaddle(new cp.v(this.touchStartCoords.x, this.touchStartCoords.y), new cp.v(this.paddleEndCoords.x, this.paddleEndCoords.y), gamefield.space);
+        this.paddle = LevelObjectsFactory.addPaddle(new cp.v(this.touchStartCoords.x, this.touchStartCoords.y), new cp.v(this.paddleEndCoords.x, this.paddleEndCoords.y), this.gamefield.space);
     },
 
     removePaddle: function (gamefield) {
         if (this.paddle != null) {
-            gamefield.scheduleRemoveBody(this.paddle);
+            this.gamefield.scheduleRemoveBody(this.paddle);
             this.paddle = null;
         }
         // if (this.paddleSprite != null) {
         //     this.paddleSprite.removeFromParent();
         // }
         this.isPaddleBeingDrawn = false;
-        gamefield.drawNodeTouch.clear();
+        this.gamefield.drawNodeTouch.clear();
         this.removeSplashCircle();
     }
 };
