@@ -8,6 +8,7 @@ var GamefieldScene = cc.Scene.extend({
 
     containerBg: null,
     containerFg: null,
+    containerUi: null,
     containerArea: null,
     containerLevelObjects: null,
     containerParticles: null,
@@ -38,19 +39,23 @@ var GamefieldScene = cc.Scene.extend({
         this.initDebugMode();
         this.scheduleUpdate();
 
-        var block = LevelObjectsFactory.createBlock(149, 442, 0.00, "Block_Normal_1", this.space, this.containerFg);
-        console.log("Gamefield initialized");
+        var block = LevelObjectsFactory.createBlock(149, 442, 0.00, "Block_Normal_1", this.space, this.containerLevelObjects);
+        this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
+        this.balls.push(LevelObjectsFactory.addBall(300, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
+        this.balls[0].setVel(cc.p(5, 70));
     },
 
     initLayers: function () {
         this.containerBg = new cc.Node();
         this.containerFg = new cc.Node();
+        this.containerUi = new cc.Node();
         this.containerArea = new cc.Node();
         this.containerLevelObjects = new cc.Node();
         this.containerParticles = new cc.Node();
 
         this.addChild(this.containerBg);
         this.addChild(this.containerFg);
+        this.addChild(this.containerUi);
         this.containerFg.addChild(this.containerArea);
         this.containerFg.addChild(this.containerLevelObjects);
         this.containerFg.addChild(this.containerParticles);
@@ -116,9 +121,15 @@ var GamefieldScene = cc.Scene.extend({
         this.blocksHitInRow = 0;
     },
 
+    processBlockHit: function (levelObject) {
+        this.blocksHitInRow += 1;
+        // this.playBlockHitSound();
+    },
+
     processBlockDestroyed: function (levelObject) {
         this.blocksLeft -= 1;
         if (this.blocksLeft <= 0) {
+            console.log("Won");
             // this.gameState = GameStates.WON;
         }
     },
@@ -128,7 +139,34 @@ var GamefieldScene = cc.Scene.extend({
     },
 
     update: function (dt) {
+        this.space.step(dt);
+        this.updateBlocks(dt);
+        this.updateBalls(dt);
         this.removeMarkedBodies();
+    },
+
+    updateBlocks: function (dt) {
+        for (var i = 0; i < this.blocks.length; i++) {
+            this.blocks[i].update(dt, this);
+        }
+    },
+
+    updateBalls: function (dt) {
+        for (var i = 0; i < this.balls.length; i++) {
+            var ball = this.balls[i];
+            this.checkBallOutOfScreen(ball);
+        }
+    },
+
+    checkBallOutOfScreen: function (ball) {
+        var ballPosY = ball.getPos().y;
+        if ((ballPosY < -50 && ball.getVel().y < 0) || ballPosY > GameConstants.APP_HEIGHT + 50) {
+            this.processBallLost(ball);
+        }
+    },
+
+    processBallLost: function (ball) {
+        this.scheduleRemoveBody(ball);
     },
 
     scheduleRemoveBody: function (bodyToRemove) {

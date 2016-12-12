@@ -23,9 +23,6 @@ var LevelObject = function () {
 
         this.hp -= 1;
 
-        // gamefield.blocksHitInRow += 1;
-        // gamefield.playBlockHitSound();
-
         if (this.hp <= 0) {
             gamefield.scheduleRemoveBody(this.body);
             gamefield.processBlockDestroyed(this);
@@ -43,6 +40,7 @@ var LevelObject = function () {
                 }
             }
             this.displayHitAnimation();
+            gamefield.processBlockHit(this);
         }
     };
 
@@ -190,6 +188,7 @@ var LevelObjectsFactory = {
             userData.nextSkins = this.NEXT_SKINS_BY_SKIN[skin]
         }
         body.userData = userData;
+        userData.body = body;
         return body;
     },
 
@@ -247,6 +246,7 @@ var LevelObjectsFactory = {
         userData.sprite = sprite;
         userData.nextSkins = nextSkins;
         body.userData = userData;
+        userData.body = body;
 
         if (spriteName.indexOf("agnet") >= 0) {
             var areaSprite;
@@ -326,8 +326,8 @@ var LevelObjectsFactory = {
         shape.setCollisionType(collisionType);
     },
 
-    addBall: function (circleX, circleY, space, container, spriteName) {
-        return this.addPhysicsCircle(circleX, circleY, space, container, Tags.BALL, CollisionTypes.COMMON, this.BALL_ELASTICITY, this.BALL_FRICTION, spriteName);
+    addBall: function (ballX, ballY, space, container, spriteName) {
+        return this.addPhysicsCircle(ballX, ballY, space, container, Tags.BALL, CollisionTypes.COMMON, this.BALL_ELASTICITY, this.BALL_FRICTION, spriteName);
     },
 
     addPhysicsCircle: function (circleX, circleY, space, container, tag, collisionType, elasticity, friction, spriteName) {
@@ -345,6 +345,7 @@ var LevelObjectsFactory = {
         userData.tag = tag;
         userData.sprite = sprite;
         body.userData = userData;
+        userData.body = body;
         return body;
     },
 

@@ -16,11 +16,6 @@ var MathUtils = {
     }
 };
 
-var GameData = {
-    APP_WIDTH: 480,
-    APP_HEIGHT: 720
-};
-
 var GameSpriteManager = {
     getSprite: function (spriteName) {
         return new cc.Sprite(this.getFrame(spriteName));
@@ -97,8 +92,15 @@ var GameParticleManager = {
 };
 
 var GameConstants = {
+    APP_WIDTH: 480,
+    APP_HEIGHT: 720,
+
     MAGNET_STRENGTH: 12,
     GOD_MOD_TIME: 0.15,
     PADDLE_MAX_LENGTH: 150,
-    PADDLE_MAX_Y: 300
+    PADDLE_MAX_Y: 300,
+    INITIAL_BALL_X: 240,
+    INITIAL_BALL_Y: -300,
+
+    SPRITE_NAME_BALL: "NeuBall"
 };

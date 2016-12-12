@@ -29,7 +29,7 @@ var IngameUI = function (gamefield) {
         if (this.pauseButton == null) {
             this.pauseButton = this.createButton("ButtonPause", "ButtonPause_Over", this.PAUSE_BUTTON_HIDDEN_COORDS.x, this.PAUSE_BUTTON_HIDDEN_COORDS.y, this.pauseButtonTouchEvent);
         }
-        this.gamefield.uiContainer.addChild(this.pauseButton);
+        this.gamefield.containerUi.addChild(this.pauseButton);
         this.showPauseButton();
     };
 
@@ -107,7 +107,7 @@ var IngameUI = function (gamefield) {
 
     this.showPauseButton = function () {
         var position = this.pauseButton.getPosition();
-        if (position.x > GameData.APP_WIDTH) {
+        if (position.x > GameConstants.APP_WIDTH) {
             this.pauseButton.setTouchEnabled(true);
             var slideInAction = cc.moveTo(this.PAUSE_TWEEN_DURATION, this.PAUSE_BUTTON_COORDS.x, this.PAUSE_BUTTON_COORDS.y);
             this.pauseButton.runAction(slideInAction);
@@ -119,7 +119,7 @@ var IngameUI = function (gamefield) {
 
     this.hidePauseButton = function () {
         var position = this.pauseButton.getPosition();
-        if (position.x < GameData.APP_WIDTH) {
+        if (position.x < GameConstants.APP_WIDTH) {
             this.pauseButton.setTouchEnabled(false);
             var slideOutAction = cc.moveTo(this.PAUSE_TWEEN_DURATION, this.PAUSE_BUTTON_HIDDEN_COORDS.x, this.PAUSE_BUTTON_HIDDEN_COORDS.y);
             this.pauseButton.runAction(slideOutAction);
@@ -135,8 +135,8 @@ var IngameUI = function (gamefield) {
         this.giantGear = GameSpriteManager.getSprite("ButtonsFrameGear");
         this.giantGear.setPosition(cc.p(this.FRAME_COORDS.x, this.FRAME_COORDS.y + this.GIANT_GEAR_OFFSET));
         this.giantGear.runAction(cc.rotateBy(60, 360).repeatForever());
-        this.gamefield.uiContainer.addChild(this.menuFrame);
-        this.gamefield.uiContainer.addChild(this.giantGear);
+        this.gamefield.containerUi.addChild(this.menuFrame);
+        this.gamefield.containerUi.addChild(this.giantGear);
 
         this.createPauseMenuButtons();
         this.resumeButton.setPosition(this.RESUME_BUTTON_COORDS.x, this.RESUME_BUTTON_COORDS.y);
@@ -159,19 +159,19 @@ var IngameUI = function (gamefield) {
             return;
         }
         this.resumeButton = this.createButton("ButtonResume", "ButtonResume_Over", this.RESUME_BUTTON_COORDS.x, this.RESUME_BUTTON_COORDS.y, this.resumeButtonTouchEvent);
-        this.gamefield.uiContainer.addChild(this.resumeButton);
+        this.gamefield.containerUi.addChild(this.resumeButton);
 
         this.exitButton = this.createButton("ButtonExit", "ButtonExit_Over", this.EXIT_BUTTON_COORDS.x, this.EXIT_BUTTON_COORDS.y, this.exitButtonTouchEvent);
-        this.gamefield.uiContainer.addChild(this.exitButton);
+        this.gamefield.containerUi.addChild(this.exitButton);
 
         this.retryButton = this.createButton("ButtonRestart", "ButtonRestart_Over", this.RETRY_BUTTON_COORDS.x, this.RETRY_BUTTON_COORDS.y, this.retryButtonTouchEvent);
-        this.gamefield.uiContainer.addChild(this.retryButton);
+        this.gamefield.containerUi.addChild(this.retryButton);
 
         this.soundOnButton = this.createButton("ButtonSoundOn", "ButtonSoundOn_Over", this.SOUND_BUTTON_COORDS.x, this.SOUND_BUTTON_COORDS.x, this.soundButtonTouchEvent);
-        this.gamefield.uiContainer.addChild(this.soundOnButton);
+        this.gamefield.containerUi.addChild(this.soundOnButton);
 
         this.soundOffButton = this.createButton("ButtonSoundOff", "ButtonSoundOff_Over", this.SOUND_BUTTON_COORDS.x, this.SOUND_BUTTON_COORDS.x, this.soundButtonTouchEvent);
-        this.gamefield.uiContainer.addChild(this.soundOffButton);
+        this.gamefield.containerUi.addChild(this.soundOffButton);
 
         this.removeMenuListeners();
     };
