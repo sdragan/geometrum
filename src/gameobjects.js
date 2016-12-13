@@ -11,6 +11,10 @@ var LevelObject = function () {
         return this.blockType.indexOf(typeToSearch) >= 0;
     };
 
+    this.makeInvulnerable = function (time) {
+        this.godModeTime = time;
+    };
+
     this.processHit = function (ball, gamefield) {
         if (this.hasType(BlockTypes.UNBREAKABLE) || this.godModeTime > 0 || gamefield.bodiesToRemove.indexOf(this.body) >= 0) {
             return;
@@ -31,7 +35,7 @@ var LevelObject = function () {
             if (this.nextSkins.length > 0) {
                 var nextSkin = this.nextSkins.shift();
                 if (nextSkin !== "") {
-                    this.godModeTime = GameConstants.GOD_MOD_TIME;
+                    this.godModeTime = GameConstants.GOD_MOD_TIME_DEFAULT;
                     var previousParent = this.sprite.getParent();
                     this.sprite.removeFromParent();
                     this.sprite = GameSpriteManager.getPhSprite(nextSkin);

@@ -2,6 +2,7 @@ var GamefieldScene = cc.Scene.extend({
 
     space: null,
     bodiesToRemove: null,
+    bodiesToCreate: null,
     blocks: null,
     balls: null,
     blocksLeft: 0,
@@ -20,15 +21,18 @@ var GamefieldScene = cc.Scene.extend({
 
     blocksHitInRow: 0,
     score: 0,
+    level: 0,
 
     initVars: function () {
         this.space = null;
         this.bodiesToRemove = [];
+        this.bodiesToCreate = [];
         this.blocks = [];
         this.balls = [];
         this.blocksLeft = 0;
         this.blocksHitInRow = 0;
         this.score = 0;
+        this.level = 0;
     },
 
     setup: function () {
@@ -135,7 +139,12 @@ var GamefieldScene = cc.Scene.extend({
 
         this.blocksLeft -= 1;
         if (this.blocksLeft <= 0) {
-            console.log("Won");
+            console.log("Level " + this.level.toString() + " won");
+            this.level += 1;
+            this.blocksLeft = this.level;
+            for (var i = 0; i < this.level; i++) {
+                this.scheduleAddBody(Math.random() * 400 + 40, Math.random() * 380 + 300, Math.random() * 360, "Block_Normal_1", true, 0, 0)
+            }
             // this.gameState = GameStates.WON;
         }
     },
@@ -149,6 +158,7 @@ var GamefieldScene = cc.Scene.extend({
         this.updateBlocks(dt);
         this.updateBalls(dt);
         this.removeMarkedBodies();
+        this.addScheduledBodies();
     },
 
     updateBlocks: function (dt) {
@@ -175,6 +185,31 @@ var GamefieldScene = cc.Scene.extend({
         this.scheduleRemoveBody(ball);
         if (this.balls.length == 1) {
             console.log("Lost");
+        }
+    },
+
+    scheduleAddBody: function (objX, objY, objAngle, spriteName, isStatic, velX, velY) {
+        this.bodiesToCreate.push({
+            objX: objX,
+            objY: objY,
+            objAngle: objAngle,
+            spriteName: spriteName,
+            isStatic: isStatic,
+            velX: velX,
+            velY: velY
+        });
+    },
+
+    addScheduledBodies: function () {
+        if (this.bodiesToCreate.length > 0) {
+            for (var i = 0; i < this.bodiesToCreate.length; i++) {
+                var desc = this.bodiesToCreate[i];
+                var body = LevelObjectsFactory.createBlock(desc.objX, desc.objY, desc.objAngle, desc.spriteName, this.space, this.containerLevelObjects);
+                body.setVel(cc.p(desc.velX, desc.velY));
+                body.userData.makeInvulnerable(GameConstants.GOD_MOD_TIME_DEFAULT);
+                this.bodies.push(body);
+            }
+            this.bodiesToCreate = [];
         }
     },
 
