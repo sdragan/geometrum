@@ -19,6 +19,7 @@ var GamefieldScene = cc.Scene.extend({
     effectTintLevelObjects: null,
 
     blocksHitInRow: 0,
+    score: 0,
 
     initVars: function () {
         this.space = null;
@@ -27,6 +28,7 @@ var GamefieldScene = cc.Scene.extend({
         this.balls = [];
         this.blocksLeft = 0;
         this.blocksHitInRow = 0;
+        this.score = 0;
     },
 
     setup: function () {
@@ -43,6 +45,7 @@ var GamefieldScene = cc.Scene.extend({
         this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
         this.balls.push(LevelObjectsFactory.addBall(300, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
         this.balls[0].setVel(cc.p(5, 70));
+        this.balls[1].setVel(cc.p(-5, 120));
     },
 
     initLayers: function () {
@@ -127,6 +130,9 @@ var GamefieldScene = cc.Scene.extend({
     },
 
     processBlockDestroyed: function (levelObject) {
+        this.blocksHitInRow += 1;
+        // this.playBlockHitSound();
+
         this.blocksLeft -= 1;
         if (this.blocksLeft <= 0) {
             console.log("Won");
@@ -167,6 +173,9 @@ var GamefieldScene = cc.Scene.extend({
 
     processBallLost: function (ball) {
         this.scheduleRemoveBody(ball);
+        if (this.balls.length == 1) {
+            console.log("Lost");
+        }
     },
 
     scheduleRemoveBody: function (bodyToRemove) {
