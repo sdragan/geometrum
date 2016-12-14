@@ -161,6 +161,10 @@ var LevelObjectsFactory = {
         Block_Normal_1: [BlockTypes.NORMAL]
     },
 
+    BASE_SCORE_BY_SKIN: {
+        Block_Normal_1: 1
+    },
+
     NEXT_SKINS_BY_SKIN: {
         Block_Tough_1_hp3: ["Block_Tough_1_hp2", "Block_Tough_1_hp1"]
     },

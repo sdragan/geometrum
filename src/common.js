@@ -44,6 +44,7 @@ var GameSpriteManager = {
 var GameSoundManager = {
     isSoundOn: true,
     cachedSounds: [],
+    BLOCK_HIT_SOUND_MAX: 5,
     init: function () {
         /*
          for (var i = 1; i < 13; i++) {
@@ -58,6 +59,14 @@ var GameSoundManager = {
         }
         // this.cacheSoundIfWasntPlayedBefore(soundId);
         cc.audioEngine.playEffect(res[soundId], false);
+    },
+    playBlockHitSound: function (blocksHitInRow) {
+        var soundIndex = blocksHitInRow;
+        if (blocksHitInRow > this.BLOCK_HIT_SOUND_MAX) {
+            soundIndex = this.BLOCK_HIT_SOUND_MAX;
+        }
+        var str = soundIndex < 10 ? "0" + soundIndex.toString() : soundIndex.toString();
+        this.playSound("sound_block_hit_" + str);
     },
     cacheSoundIfWasntPlayedBefore: function (soundId) {
         if (this.cachedSounds.indexOf(soundId) < 0) {
@@ -98,7 +107,7 @@ var GameConstants = {
     MAGNET_STRENGTH: 12,
     GOD_MOD_TIME_DEFAULT: 0.15,
     PADDLE_MAX_LENGTH: 150,
-    PADDLE_MAX_Y: 300,
+    PADDLE_MAX_Y: 700,
     INITIAL_BALL_X: 240,
     INITIAL_BALL_Y: -300,
 

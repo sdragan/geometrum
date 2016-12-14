@@ -163,7 +163,7 @@ var GamefieldScene = cc.Scene.extend({
 
     updateBlocks: function (dt) {
         for (var i = 0; i < this.blocks.length; i++) {
-            this.blocks[i].update(dt, this);
+            this.blocks[i].userData.update(dt, this);
         }
     },
 
@@ -207,7 +207,7 @@ var GamefieldScene = cc.Scene.extend({
                 var body = LevelObjectsFactory.createBlock(desc.objX, desc.objY, desc.objAngle, desc.spriteName, this.space, this.containerLevelObjects);
                 body.setVel(cc.p(desc.velX, desc.velY));
                 body.userData.makeInvulnerable(GameConstants.GOD_MOD_TIME_DEFAULT);
-                this.bodies.push(body);
+                this.blocks.push(body);
             }
             this.bodiesToCreate = [];
         }
@@ -318,6 +318,21 @@ var Paddle = {
 
         this.updatePaddleEndCoords(touchX, touchY, this.gamefield);
         this.displayPaddleBeingDrawn(this.paddleEndCoords.x, this.paddleEndCoords.y, this.gamefield);
+
+        /*
+         if (this.paddle != null) {
+         this.paddle.shapeList[0].setEndpoints(cc.p(this.touchStartCoords.x, this.touchStartCoords.y), cc.p(this.paddleEndCoords.x, this.paddleEndCoords.y));
+         // this.paddle.shapeList[0].bb_l = this.touchStartCoords.x;
+         // this.paddle.shapeList[0].ta.x = this.touchStartCoords.x;
+         // this.paddle.shapeList[0].bb_b = this.touchStartCoords.y;
+         // this.paddle.shapeList[0].ta_y = this.touchStartCoords.y;
+         // this.paddle.shapeList[0].bb_r = this.paddleEndCoords.x;
+         // this.paddle.shapeList[0].tb_x = this.paddleEndCoords.x;
+         // this.paddle.shapeList[0].bb_t = this.paddleEndCoords.y;
+         // this.paddle.shapeList[0].tb_y = this.paddleEndCoords.y;
+         this.paddle.shapeList[0].cacheBB();
+         }
+         */
     },
 
     updatePaddleEndCoords: function (paddleEndX, paddleEndY) {
@@ -350,6 +365,9 @@ var Paddle = {
         if (this.isPaddleBeingDrawn == false) {
             return;
         }
+        // if (this.paddle != null) {
+        //     console.log(this.paddle.shapeList[0].bb_l, this.paddle.shapeList[0].bb_b, " - ", this.paddle.shapeList[0].bb_r, this.paddle.shapeList[0].bb_t);
+        // }
         this.isPaddleBeingDrawn = false;
         this.gamefield.drawNodeTouch.clear();
         this.removeSplashCircle();
