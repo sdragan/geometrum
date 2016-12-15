@@ -119,6 +119,10 @@ var LevelObject = function () {
     }
 };
 
+var LevelObjectLinearMoveComponent = function (levelObject) {
+
+};
+
 var Tags = {
     BALL: "ball",
     BLOCK: "block",
