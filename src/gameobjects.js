@@ -1,6 +1,7 @@
 var LevelObject = function () {
     this.tag = "";
     this.hp = 1;
+    this.score = 0;
     this.sprite = null;
     this.blockType = [BlockTypes.NORMAL];
     this.godModeTime = 0;
@@ -162,7 +163,8 @@ var LevelObjectsFactory = {
     },
 
     BASE_SCORE_BY_SKIN: {
-        Block_Normal_1: 1
+        Block_Normal_1: 1,
+        Block_Tough_1_hp3: 3
     },
 
     NEXT_SKINS_BY_SKIN: {
@@ -195,6 +197,7 @@ var LevelObjectsFactory = {
         if (this.NEXT_SKINS_BY_SKIN.hasOwnProperty(skin)) {
             userData.nextSkins = this.NEXT_SKINS_BY_SKIN[skin]
         }
+        userData.score = this.BASE_SCORE_BY_SKIN[skin];
         body.userData = userData;
         userData.body = body;
         return body;

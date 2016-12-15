@@ -126,6 +126,7 @@ var GamefieldScene = cc.Scene.extend({
 
     processPaddleHit: function (paddle) {
         this.blocksHitInRow = 0;
+        Paddle.removePaddle(this);
     },
 
     processBlockHit: function (levelObject) {
@@ -136,6 +137,7 @@ var GamefieldScene = cc.Scene.extend({
     processBlockDestroyed: function (levelObject) {
         this.blocksHitInRow += 1;
         // this.playBlockHitSound();
+        this.score += levelObject.score * this.blocksHitInRow;
 
         this.blocksLeft -= 1;
         if (this.blocksLeft <= 0) {
