@@ -46,10 +46,16 @@ var GamefieldScene = cc.Scene.extend({
         this.scheduleUpdate();
 
         var block = LevelObjectsFactory.createBlock(149, 442, 0.00, "Block_Normal_1", this.space, this.containerLevelObjects);
+        this.blocks.push(block);
         this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
         this.balls.push(LevelObjectsFactory.addBall(300, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
         this.balls[0].setVel(cc.p(5, 70));
         this.balls[1].setVel(cc.p(-5, 120));
+
+        // this.someSprite = GameSpriteManager.getSprite("Block_Magnet_1_hp1");
+        // this.someSprite.setPosition(cc.p(80, 100));
+        // this.addChild(this.someSprite);
+        this.foo = new LevelObjectLinearMoveComponent(block);
     },
 
     initLayers: function () {
@@ -161,6 +167,8 @@ var GamefieldScene = cc.Scene.extend({
         this.updateBalls(dt);
         this.removeMarkedBodies();
         this.addScheduledBodies();
+
+        this.foo.update(dt);
     },
 
     updateBlocks: function (dt) {
@@ -335,6 +343,15 @@ var Paddle = {
          this.paddle.shapeList[0].cacheBB();
          }
          */
+
+
+        // todo: might be horrible for performance
+        if (this.paddle != null) {
+            this.gamefield.scheduleRemoveBody(this.paddle);
+            this.paddle = null;
+        }
+        this.paddle = LevelObjectsFactory.addPaddle(new cp.v(this.touchStartCoords.x, this.touchStartCoords.y), new cp.v(this.paddleEndCoords.x, this.paddleEndCoords.y), this.gamefield.space);
+
     },
 
     updatePaddleEndCoords: function (paddleEndX, paddleEndY) {

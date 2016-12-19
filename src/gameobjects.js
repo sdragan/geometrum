@@ -120,7 +120,57 @@ var LevelObject = function () {
 };
 
 var LevelObjectLinearMoveComponent = function (levelObject) {
+    this.levelObject = levelObject;
+    this.easingFunction = GeometrumEase.easeInQuartic;
+    this.waypoints = [{x: 80, y: 500}, {x: 240, y: 400}];
+    this.currentWaypointIndex = 1;
+    this.duration = 2;
+    this.waitOnWaypoints = 0;
+    this.time = 0;
+    this.waitTime = this.waitOnWaypoints;
 
+    this.update = function (dt) {
+        if (this.waitTime > 0) {
+            this.waitTime -= dt;
+            return;
+        }
+
+        this.time += dt;
+        if (this.time >= this.duration) {
+            this.time = this.duration;
+        }
+        var prevWaypoint;
+        if (this.currentWaypointIndex == 0) {
+            prevWaypoint = this.waypoints[this.waypoints.length - 1];
+        }
+        else {
+            prevWaypoint = this.waypoints[this.currentWaypointIndex - 1];
+        }
+        var newX = this.easingFunction(this.time, prevWaypoint.x, this.waypoints[this.currentWaypointIndex].x - prevWaypoint.x, this.duration);
+        var newY = this.easingFunction(this.time, prevWaypoint.y, this.waypoints[this.currentWaypointIndex].y - prevWaypoint.y, this.duration);
+        this.levelObject.setPos(cc.p(newX, newY));
+        if (this.time >= this.duration) {
+            this.time = 0;
+            this.waitTime = this.waitOnWaypoints;
+            if (this.currentWaypointIndex < this.waypoints.length - 1) {
+                this.currentWaypointIndex += 1;
+            }
+            else {
+                this.currentWaypointIndex = 0;
+            }
+        }
+    };
+};
+
+var GeometrumEase = {
+    easeInQuad: function (t, b, c, d) {
+        return c * (t /= d) * t + b;
+    },
+
+    easeInQuartic: function (t, b, c, d) {
+        var ts = (t /= d) * t;
+        return b + c * (ts * ts);
+    }
 };
 
 var Tags = {
@@ -181,7 +231,13 @@ var LevelObjectsFactory = {
         }
 
         var sprite = GameSpriteManager.getPhSprite(skin);
-        var body = this.createStaticBody();
+        // var body = this.createStaticBody();
+
+        var mass = this.MOVABLE_BLOCK_MASS;
+        var nodeSize = sprite.getContentSize();
+        var momentum = cp.momentForBox(mass, nodeSize.width, nodeSize.height);
+        var body = this.createNormalBody(space, mass, momentum);
+
         body.setPos(cc.p(blockX, blockY));
         body.setAngle(MathUtils.degToRad(360 - angle));
         sprite.setBody(body);
