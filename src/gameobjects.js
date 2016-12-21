@@ -36,7 +36,7 @@ var LevelObject = function () {
             if (this.nextSkins.length > 0) {
                 var nextSkin = this.nextSkins.shift();
                 if (nextSkin !== "") {
-                    this.godModeTime = GameConstants.GOD_MOD_TIME_DEFAULT;
+                    this.godModeTime = GameConstants.GOD_MODE_TIME_DEFAULT;
                     var previousParent = this.sprite.getParent();
                     this.sprite.removeFromParent();
                     this.sprite = GameSpriteManager.getPhSprite(nextSkin);
@@ -93,7 +93,7 @@ var LevelObject = function () {
                 ball.setVel(ball.getVel().add(pt.mult(GameConstants.MAGNET_STRENGTH * multiplier)));
             }
         }
-    }
+    };
 
     this.remove = function (space) {
 
@@ -119,12 +119,12 @@ var LevelObject = function () {
     }
 };
 
-var LevelObjectLinearMoveComponent = function (levelObject) {
+var LevelObjectNonLinearMoveComponent = function (levelObject) {
     this.levelObject = levelObject;
     this.easingFunction = GeometrumEase.easeInQuartic;
-    this.waypoints = [{x: 80, y: 500}, {x: 240, y: 400}];
+    this.waypoints = [{x: 0, y: 100}, {x: 480, y: 100}, {x: 240, y: 400}];
     this.currentWaypointIndex = 1;
-    this.duration = 2;
+    this.duration = 4;
     this.waitOnWaypoints = 0;
     this.time = 0;
     this.waitTime = this.waitOnWaypoints;
@@ -139,6 +139,8 @@ var LevelObjectLinearMoveComponent = function (levelObject) {
         if (this.time >= this.duration) {
             this.time = this.duration;
         }
+        var currentWaypoint = this.waypoints[this.currentWaypointIndex];
+        var currentPosition = this.levelObject.getPos();
         var prevWaypoint;
         if (this.currentWaypointIndex == 0) {
             prevWaypoint = this.waypoints[this.waypoints.length - 1];
@@ -148,7 +150,11 @@ var LevelObjectLinearMoveComponent = function (levelObject) {
         }
         var newX = this.easingFunction(this.time, prevWaypoint.x, this.waypoints[this.currentWaypointIndex].x - prevWaypoint.x, this.duration);
         var newY = this.easingFunction(this.time, prevWaypoint.y, this.waypoints[this.currentWaypointIndex].y - prevWaypoint.y, this.duration);
-        this.levelObject.setPos(cc.p(newX, newY));
+        // this.levelObject.setPos(cc.p(newX, newY));
+        var diffX = newX - currentPosition.x;
+        var diffY = newY - currentPosition.y;
+        this.levelObject.setVel(cc.p((diffX / dt) / this.duration, (diffY / dt) / this.duration));
+
         if (this.time >= this.duration) {
             this.time = 0;
             this.waitTime = this.waitOnWaypoints;
@@ -216,6 +222,11 @@ var LevelObjectsFactory = {
         Block_Normal_1: [BlockTypes.NORMAL]
     },
 
+    HP_BY_SKIN: {
+        Block_Normal_1: 3,
+        Block_Tough_1_hp3: 3
+    },
+
     BASE_SCORE_BY_SKIN: {
         Block_Normal_1: 1,
         Block_Tough_1_hp3: 3
@@ -252,7 +263,7 @@ var LevelObjectsFactory = {
         var userData = new LevelObject();
         userData.tag = Tags.BLOCK;
         userData.blockType = this.TYPES_BY_SKIN[skin];
-        userData.hp = userData.hasType(BlockTypes.TOUGH) ? 3 : 1;
+        userData.hp = this.HP_BY_SKIN[skin];
         userData.sprite = sprite;
         if (this.NEXT_SKINS_BY_SKIN.hasOwnProperty(skin)) {
             userData.nextSkins = this.NEXT_SKINS_BY_SKIN[skin]

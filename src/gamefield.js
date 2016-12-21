@@ -40,22 +40,25 @@ var GamefieldScene = cc.Scene.extend({
         this.initLayers();
         this.initEffects();
         this.initPhysics();
+        this.addWalls();
         Paddle.init(this);
         Paddle.addListeners();
         this.initDebugMode();
         this.scheduleUpdate();
 
-        var block = LevelObjectsFactory.createBlock(149, 442, 0.00, "Block_Normal_1", this.space, this.containerLevelObjects);
+        var block = LevelObjectsFactory.createBlock(0, 100, 0.00, "Block_Normal_1", this.space, this.containerLevelObjects);
         this.blocks.push(block);
+
         this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
-        this.balls.push(LevelObjectsFactory.addBall(300, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
         this.balls[0].setVel(cc.p(5, 70));
-        this.balls[1].setVel(cc.p(-5, 120));
+
+        // this.balls.push(LevelObjectsFactory.addBall(300, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
+        // this.balls[1].setVel(cc.p(-5, 120));
 
         // this.someSprite = GameSpriteManager.getSprite("Block_Magnet_1_hp1");
         // this.someSprite.setPosition(cc.p(80, 100));
         // this.addChild(this.someSprite);
-        this.foo = new LevelObjectLinearMoveComponent(block);
+        this.foo = new LevelObjectNonLinearMoveComponent(block);
     },
 
     initLayers: function () {
@@ -100,6 +103,15 @@ var GamefieldScene = cc.Scene.extend({
     initDebugMode: function () {
         var phDebugNode = new cc.PhysicsDebugNode(this.space);
         this.addChild(phDebugNode, 10);
+    },
+
+    addWalls: function () {
+        var wH = LevelObjectsFactory.WALLS_WIDTH;
+        var winSize = {width: GameConstants.APP_WIDTH, height: GameConstants.APP_HEIGHT};
+
+        LevelObjectsFactory.addWall(new cp.v(-wH, 0), new cp.v(-wH, winSize.height), this.space);
+        LevelObjectsFactory.addWall(new cp.v(winSize.width + wH, winSize.height), new cp.v(winSize.width + wH, 0), this.space);
+        LevelObjectsFactory.addWall(new cp.v(0, winSize.height + wH), new cp.v(winSize.width, winSize.height + wH), this.space);
     },
 
     collisionHandler: function (arbiter, space) {
@@ -216,7 +228,7 @@ var GamefieldScene = cc.Scene.extend({
                 var desc = this.bodiesToCreate[i];
                 var body = LevelObjectsFactory.createBlock(desc.objX, desc.objY, desc.objAngle, desc.spriteName, this.space, this.containerLevelObjects);
                 body.setVel(cc.p(desc.velX, desc.velY));
-                body.userData.makeInvulnerable(GameConstants.GOD_MOD_TIME_DEFAULT);
+                body.userData.makeInvulnerable(GameConstants.GOD_MODE_TIME_DEFAULT);
                 this.blocks.push(body);
             }
             this.bodiesToCreate = [];
