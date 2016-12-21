@@ -7,6 +7,7 @@ var LevelObject = function () {
     this.godModeTime = 0;
     this.nextSkins = [];
     this.body = null;
+    this.movementComponents = [];
 
     this.hasType = function (typeToSearch) {
         return this.blockType.indexOf(typeToSearch) >= 0;
@@ -95,6 +96,12 @@ var LevelObject = function () {
         }
     };
 
+    this.updateMovementComponents = function (dt) {
+        for (var i = 0; i < this.movementComponents.length; i++) {
+            this.movementComponents[i].update(dt);
+        }
+    };
+
     this.remove = function (space) {
 
         while (this.body.shapeList.length > 0) {
@@ -116,16 +123,24 @@ var LevelObject = function () {
             };
             this.areaSprite.runAction(cc.sequence(cc.fadeOut(0.5), cc.callFunc(removeSprite, this)));
         }
+
+        this.movementComponents = [];
     }
 };
 
-var LevelObjectNonLinearMoveComponent = function (levelObject) {
+var LevelObjectNonLinearMoveComponent = function (levelObject, waypoints, duration, waitOnWaypoints, easingFunction) {
+    // this.easingFunction = GeometrumEase.easeInQuartic;
+    // this.waypoints = [{x: 0, y: 100}, {x: 480, y: 100}, {x: 240, y: 400}];
+    // this.duration = 4;
+    // this.waitOnWaypoints = 0;
+
     this.levelObject = levelObject;
-    this.easingFunction = GeometrumEase.easeInQuartic;
-    this.waypoints = [{x: 0, y: 100}, {x: 480, y: 100}, {x: 240, y: 400}];
+    this.waypoints = waypoints;
+    this.duration = duration;
+    this.waitOnWaypoints = waitOnWaypoints;
+    this.easingFunction = easingFunction;
+
     this.currentWaypointIndex = 1;
-    this.duration = 4;
-    this.waitOnWaypoints = 0;
     this.time = 0;
     this.waitTime = this.waitOnWaypoints;
 

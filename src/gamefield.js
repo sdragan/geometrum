@@ -48,6 +48,10 @@ var GamefieldScene = cc.Scene.extend({
 
         var block = LevelObjectsFactory.createBlock(0, 100, 0.00, "Block_Normal_1", this.space, this.containerLevelObjects);
         this.blocks.push(block);
+        block.userData.movementComponents.push(new LevelObjectNonLinearMoveComponent(block, [{x: 0, y: 100}, {
+            x: 480,
+            y: 100
+        }, {x: 240, y: 400}], 2.5, 0.5, GeometrumEase.easeInQuad()));
 
         this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
         this.balls[0].setVel(cc.p(5, 70));
@@ -179,8 +183,6 @@ var GamefieldScene = cc.Scene.extend({
         this.updateBalls(dt);
         this.removeMarkedBodies();
         this.addScheduledBodies();
-
-        this.foo.update(dt);
     },
 
     updateBlocks: function (dt) {
