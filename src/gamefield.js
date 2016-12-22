@@ -40,7 +40,7 @@ var GamefieldScene = cc.Scene.extend({
         this.initLayers();
         this.initEffects();
         this.initPhysics();
-        this.addWalls();
+        // this.addWalls();
         Paddle.init(this);
         Paddle.addListeners();
         this.initDebugMode();
@@ -51,18 +51,13 @@ var GamefieldScene = cc.Scene.extend({
         block.userData.movementComponents.push(new LevelObjectNonLinearMoveComponent(block, [{x: 0, y: 100}, {
             x: 480,
             y: 100
-        }, {x: 240, y: 400}], 2.5, 0.5, GeometrumEase.easeInQuad()));
+        }, {x: 240, y: 400}], 5.5, 0.5, GeometrumEase.easeNone));
 
-        this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
-        this.balls[0].setVel(cc.p(5, 70));
+        // this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
+        // this.balls[0].setVel(cc.p(5, 70));
 
         // this.balls.push(LevelObjectsFactory.addBall(300, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
         // this.balls[1].setVel(cc.p(-5, 120));
-
-        // this.someSprite = GameSpriteManager.getSprite("Block_Magnet_1_hp1");
-        // this.someSprite.setPosition(cc.p(80, 100));
-        // this.addChild(this.someSprite);
-        this.foo = new LevelObjectNonLinearMoveComponent(block);
     },
 
     initLayers: function () {

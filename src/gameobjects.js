@@ -61,6 +61,9 @@ var LevelObject = function () {
         if (this.hasType(BlockTypes.MAGNET) || this.hasType(BlockTypes.ANTIMAGNET)) {
             this.updateMagnet(gamefield);
         }
+
+
+        this.updateMovementComponents(dt);
     };
 
     this.updateInvulnerability = function (dt) {
@@ -129,11 +132,6 @@ var LevelObject = function () {
 };
 
 var LevelObjectNonLinearMoveComponent = function (levelObject, waypoints, duration, waitOnWaypoints, easingFunction) {
-    // this.easingFunction = GeometrumEase.easeInQuartic;
-    // this.waypoints = [{x: 0, y: 100}, {x: 480, y: 100}, {x: 240, y: 400}];
-    // this.duration = 4;
-    // this.waitOnWaypoints = 0;
-
     this.levelObject = levelObject;
     this.waypoints = waypoints;
     this.duration = duration;
@@ -144,9 +142,16 @@ var LevelObjectNonLinearMoveComponent = function (levelObject, waypoints, durati
     this.time = 0;
     this.waitTime = this.waitOnWaypoints;
 
+    this.currentWaypoint = null;
+    this.prevWaypoint = null;
+    this.tempPoint = cc.p(0, 0);
+
     this.update = function (dt) {
         if (this.waitTime > 0) {
             this.waitTime -= dt;
+            this.tempPoint.x = 0;
+            this.tempPoint.y = 0;
+            this.levelObject.setVel(this.tempPoint);
             return;
         }
 
@@ -154,22 +159,22 @@ var LevelObjectNonLinearMoveComponent = function (levelObject, waypoints, durati
         if (this.time >= this.duration) {
             this.time = this.duration;
         }
-        var currentWaypoint = this.waypoints[this.currentWaypointIndex];
+
         var currentPosition = this.levelObject.getPos();
-        var prevWaypoint;
-        if (this.currentWaypointIndex == 0) {
-            prevWaypoint = this.waypoints[this.waypoints.length - 1];
-        }
-        else {
-            prevWaypoint = this.waypoints[this.currentWaypointIndex - 1];
-        }
-        var newX = this.easingFunction(this.time, prevWaypoint.x, this.waypoints[this.currentWaypointIndex].x - prevWaypoint.x, this.duration);
-        var newY = this.easingFunction(this.time, prevWaypoint.y, this.waypoints[this.currentWaypointIndex].y - prevWaypoint.y, this.duration);
-        // this.levelObject.setPos(cc.p(newX, newY));
+        var newX = this.easingFunction(this.time, this.prevWaypoint.x, this.currentWaypoint.x - this.prevWaypoint.x, this.duration);
+        var newY = this.easingFunction(this.time, this.prevWaypoint.y, this.currentWaypoint.y - this.prevWaypoint.y, this.duration);
         var diffX = newX - currentPosition.x;
         var diffY = newY - currentPosition.y;
-        this.levelObject.setVel(cc.p((diffX / dt) / this.duration, (diffY / dt) / this.duration));
+        this.tempPoint.x = (diffX / dt) / this.duration;
+        this.tempPoint.y = (diffY / dt) / this.duration;
+        this.levelObject.setVel(this.tempPoint);
 
+        console.log(this.time.toFixed(3), this.tempPoint.x.toFixed(2), this.tempPoint.y.toFixed(2), currentPosition.x.toFixed(2), currentPosition.y.toFixed(2));
+
+        this.processWaypointReached();
+    };
+
+    this.processWaypointReached = function () {
         if (this.time >= this.duration) {
             this.time = 0;
             this.waitTime = this.waitOnWaypoints;
@@ -179,11 +184,29 @@ var LevelObjectNonLinearMoveComponent = function (levelObject, waypoints, durati
             else {
                 this.currentWaypointIndex = 0;
             }
+            this.updateCurrentAndPrevWaypoints();
         }
     };
+
+    this.updateCurrentAndPrevWaypoints = function () {
+        this.currentWaypoint = this.waypoints[this.currentWaypointIndex];
+        if (this.currentWaypointIndex == 0) {
+            this.prevWaypoint = this.waypoints[this.waypoints.length - 1];
+        }
+        else {
+            this.prevWaypoint = this.waypoints[this.currentWaypointIndex - 1];
+        }
+    };
+
+    this.updateCurrentAndPrevWaypoints();
 };
 
 var GeometrumEase = {
+    easeNone: function (time, before, change, duration) {
+        time /= duration;
+        return before + change * (time);
+    },
+
     easeInQuad: function (t, b, c, d) {
         return c * (t /= d) * t + b;
     },
