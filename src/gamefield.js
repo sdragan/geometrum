@@ -40,21 +40,20 @@ var GamefieldScene = cc.Scene.extend({
         this.initLayers();
         this.initEffects();
         this.initPhysics();
-        // this.addWalls();
+        this.addWalls();
         Paddle.init(this);
         Paddle.addListeners();
         this.initDebugMode();
         this.scheduleUpdate();
 
-        var block = LevelObjectsFactory.createBlock(0, 100, 0.00, "Block_Normal_1", this.space, this.containerLevelObjects);
+        var block = LevelObjectsFactory.createBlock(0, 100, 0.00, "Block_Normal_1", false, this.space, this.containerLevelObjects);
         this.blocks.push(block);
-        block.userData.movementComponents.push(new LevelObjectNonLinearMoveComponent(block, [{x: 0, y: 100}, {
-            x: 480,
-            y: 100
-        }, {x: 240, y: 400}], 5.5, 0.5, GeometrumEase.easeNone));
+        block.userData.movementComponents.push(new LevelObjectNonLinearMoveComponent(block,
+            [{x: 80, y: 500}, {x: 400, y: 500}],
+            3, 0, GeometrumEase.easeInQuad));
 
-        // this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
-        // this.balls[0].setVel(cc.p(5, 70));
+        this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
+        this.balls[0].setVel(cc.p(5, 70));
 
         // this.balls.push(LevelObjectsFactory.addBall(300, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
         // this.balls[1].setVel(cc.p(-5, 120));
@@ -223,7 +222,7 @@ var GamefieldScene = cc.Scene.extend({
         if (this.bodiesToCreate.length > 0) {
             for (var i = 0; i < this.bodiesToCreate.length; i++) {
                 var desc = this.bodiesToCreate[i];
-                var body = LevelObjectsFactory.createBlock(desc.objX, desc.objY, desc.objAngle, desc.spriteName, this.space, this.containerLevelObjects);
+                var body = LevelObjectsFactory.createBlock(desc.objX, desc.objY, desc.objAngle, desc.spriteName, desc.isStatic, this.space, this.containerLevelObjects);
                 body.setVel(cc.p(desc.velX, desc.velY));
                 body.userData.makeInvulnerable(GameConstants.GOD_MODE_TIME_DEFAULT);
                 this.blocks.push(body);

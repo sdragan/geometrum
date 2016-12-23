@@ -169,7 +169,7 @@ var LevelObjectNonLinearMoveComponent = function (levelObject, waypoints, durati
         this.tempPoint.y = (diffY / dt) / this.duration;
         this.levelObject.setVel(this.tempPoint);
 
-        console.log(this.time.toFixed(3), this.tempPoint.x.toFixed(2), this.tempPoint.y.toFixed(2), currentPosition.x.toFixed(2), currentPosition.y.toFixed(2));
+        // console.log(this.time.toFixed(3), this.tempPoint.x.toFixed(2), this.tempPoint.y.toFixed(2), currentPosition.x.toFixed(2), currentPosition.y.toFixed(2));
 
         this.processWaypointReached();
     };
@@ -261,8 +261,10 @@ var LevelObjectsFactory = {
     },
 
     HP_BY_SKIN: {
-        Block_Normal_1: 3,
-        Block_Tough_1_hp3: 3
+        Block_Normal_1: 1,
+        Block_Tough_1_hp3: 3,
+        Block_Tough_1_hp2: 2,
+        Block_Tough_1_hp1: 1
     },
 
     BASE_SCORE_BY_SKIN: {
@@ -274,18 +276,22 @@ var LevelObjectsFactory = {
         Block_Tough_1_hp3: ["Block_Tough_1_hp2", "Block_Tough_1_hp1"]
     },
 
-    createBlock: function (blockX, blockY, angle, skin, space, container) {
+    createBlock: function (blockX, blockY, angle, skin, isStatic, space, container) {
         if (bodyDefs.hasOwnProperty(skin) == false) {
             throw new Error("Trying to create block with unknown skin");
         }
 
         var sprite = GameSpriteManager.getPhSprite(skin);
-        // var body = this.createStaticBody();
-
-        var mass = this.MOVABLE_BLOCK_MASS;
-        var nodeSize = sprite.getContentSize();
-        var momentum = cp.momentForBox(mass, nodeSize.width, nodeSize.height);
-        var body = this.createNormalBody(space, mass, momentum);
+        var body;
+        if (isStatic == true) {
+            body = this.createStaticBody();
+        }
+        else {
+            var mass = this.MOVABLE_BLOCK_MASS;
+            var nodeSize = sprite.getContentSize();
+            var momentum = cp.momentForBox(mass, nodeSize.width, nodeSize.height);
+            body = this.createNormalBody(space, mass, momentum);
+        }
 
         body.setPos(cc.p(blockX, blockY));
         body.setAngle(MathUtils.degToRad(360 - angle));
