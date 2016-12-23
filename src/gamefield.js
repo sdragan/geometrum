@@ -6,6 +6,7 @@ var GamefieldScene = cc.Scene.extend({
     blocks: null,
     balls: null,
     blocksLeft: 0,
+    ballSpeed: GameConstants.MIN_BALL_SPEED,
 
     containerBg: null,
     containerFg: null,
@@ -190,6 +191,7 @@ var GamefieldScene = cc.Scene.extend({
         for (var i = 0; i < this.balls.length; i++) {
             var ball = this.balls[i];
             this.checkBallOutOfScreen(ball);
+            this.limitBallSpeed(ball, dt);
         }
     },
 
@@ -205,6 +207,25 @@ var GamefieldScene = cc.Scene.extend({
         if (this.balls.length == 1) {
             console.log("Lost");
         }
+    },
+
+    limitBallSpeed: function (ball, dt) {
+        var magnitude = Math.sqrt((ball.getVelocity().x * ball.getVelocity().x) + (ball.getVelocity().y * ball.getVelocity().y));
+        if (magnitude >= this.ballSpeed) {
+            return;
+        }
+        var accelerationPerSecond = 10000;
+        var acceleration = accelerationPerSecond * dt;
+        var targetMagnitude = this.ballSpeed;
+        var diff = targetMagnitude - magnitude;
+        var newMagnitude = 0;
+        if (diff < acceleration) {
+            newMagnitude = targetMagnitude;
+        }
+        else {
+            newMagnitude = magnitude + acceleration;
+        }
+        ball.setVel(ball.getVelocity().mult(newMagnitude / magnitude));
     },
 
     scheduleAddBody: function (objX, objY, objAngle, spriteName, isStatic, velX, velY) {
