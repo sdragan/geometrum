@@ -51,6 +51,7 @@ var GamefieldScene = cc.Scene.extend({
         block.userData.movementComponents.push(new LevelObjectWaypointMoveComponent(block,
             [{x: 80, y: 500}, {x: 400, y: 500}],
             3, 0, GeometrumEase.easeInQuad));
+        block.userData.movementComponents.push(new LevelObjectAngularMoveComponent(block, 20));
 
         this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
         this.balls[0].setVel(cc.p(5, 70));

@@ -131,6 +131,15 @@ var LevelObject = function () {
     }
 };
 
+var LevelObjectAngularMoveComponent = function (levelObject, speed) {
+    this.levelObject = levelObject;
+    this.speed = speed;
+
+    this.update = function (dt) {
+        this.levelObject.setAngVel(this.speed);
+    }
+};
+
 var LevelObjectWaypointMoveComponent = function (levelObject, waypoints, duration, waitOnWaypoints, easingFunction) {
     this.levelObject = levelObject;
     this.waypoints = waypoints;
