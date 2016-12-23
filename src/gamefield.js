@@ -48,7 +48,7 @@ var GamefieldScene = cc.Scene.extend({
 
         var block = LevelObjectsFactory.createBlock(0, 100, 0.00, "Block_Normal_1", false, this.space, this.containerLevelObjects);
         this.blocks.push(block);
-        block.userData.movementComponents.push(new LevelObjectNonLinearMoveComponent(block,
+        block.userData.movementComponents.push(new LevelObjectWaypointMoveComponent(block,
             [{x: 80, y: 500}, {x: 400, y: 500}],
             3, 0, GeometrumEase.easeInQuad));
 

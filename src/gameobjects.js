@@ -131,7 +131,7 @@ var LevelObject = function () {
     }
 };
 
-var LevelObjectNonLinearMoveComponent = function (levelObject, waypoints, duration, waitOnWaypoints, easingFunction) {
+var LevelObjectWaypointMoveComponent = function (levelObject, waypoints, duration, waitOnWaypoints, easingFunction) {
     this.levelObject = levelObject;
     this.waypoints = waypoints;
     this.duration = duration;
