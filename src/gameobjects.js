@@ -203,8 +203,7 @@ var LevelObjectNonLinearMoveComponent = function (levelObject, waypoints, durati
 
 var GeometrumEase = {
     easeNone: function (time, before, change, duration) {
-        time /= duration;
-        return before + change * (time);
+        return before + change * (time / duration);
     },
 
     easeInQuad: function (t, b, c, d) {
