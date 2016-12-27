@@ -52,7 +52,7 @@ var GamefieldScene = cc.Scene.extend({
         block.userData.movementComponents.push(new LevelObjectWaypointMoveComponent(block,
             [{x: 80, y: 500}, {x: 400, y: 500}],
             3, 0, GeometrumEase.easeInQuad));
-        block.userData.movementComponents.push(new LevelObjectAngularMoveComponent(block, 20));
+        // block.userData.movementComponents.push(new LevelObjectAngularMoveComponent(block, 20));
 
         this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
         this.balls[0].setVel(cc.p(5, 70));
@@ -161,10 +161,13 @@ var GamefieldScene = cc.Scene.extend({
         if (this.blocksLeft <= 0) {
             console.log("Level " + this.level.toString() + " won");
             this.level += 1;
-            this.blocksLeft = this.level;
-            for (var i = 0; i < this.level; i++) {
-                this.scheduleAddBody(Math.random() * 400 + 40, Math.random() * 380 + 300, Math.random() * 360, "Block_Normal_1", true, 0, 0)
-            }
+            Paddle.removePaddle(this);
+            Paddle.removeListeners();
+            LevelTransition.transitToNextLevel(this);
+            // this.blocksLeft = this.level;
+            // for (var i = 0; i < this.level; i++) {
+            //     this.scheduleAddBody(Math.random() * 400 + 40, Math.random() * 380 + 300, Math.random() * 360, "Block_Normal_1", true, 0, 0)
+            // }
             // this.gameState = GameStates.WON;
         }
     },
@@ -445,5 +448,28 @@ var Paddle = {
         this.isPaddleBeingDrawn = false;
         this.gamefield.drawNodeTouch.clear();
         this.removeSplashCircle();
+    }
+};
+
+var LevelTransition = {
+    transitToNextLevel: function (gamefield) {
+        this.gamefield = gamefield;
+        this.destroyAllRemainingBlocks();
+        this.slideForegroundDown();
+    },
+
+    destroyAllRemainingBlocks: function () {
+
+    },
+
+    slideForegroundDown: function () {
+        var duration = 2;
+        var fgMoveBy = cc.moveBy(duration, 0, -GameConstants.APP_HEIGHT).easing(cc.easeCubicActionIn());
+        var switchToNextPart = cc.callFunc(this.generateNextLevel, this);
+        this.gamefield.containerFg.runAction(cc.sequence(fgMoveBy, switchToNextPart));
+    },
+
+    generateNextLevel: function () {
+
     }
 };
