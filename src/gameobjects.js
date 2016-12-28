@@ -501,3 +501,5 @@ var LevelObjectsFactory = {
         return body;
     }
 };
+
+LevelsBuilder = {};
