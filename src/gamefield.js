@@ -1,6 +1,7 @@
 var GamefieldScene = cc.Scene.extend({
 
     updateCallback: null,
+    ballSpeedCallback: null,
 
     space: null,
     bodiesToRemove: null,
@@ -15,6 +16,7 @@ var GamefieldScene = cc.Scene.extend({
     containerUi: null,
     containerArea: null,
     containerLevelObjects: null,
+    containerBall: null,
     containerParticles: null,
     drawNodeTouch: null,
 
@@ -46,22 +48,15 @@ var GamefieldScene = cc.Scene.extend({
         this.addWalls();
         Paddle.init(this);
         Paddle.addListeners();
-        this.initDebugMode();
+        // this.initDebugMode();
         this.scheduleUpdate();
+
         this.updateCallback = this.updateNormal;
+        this.ballSpeedCallback = this.limitBallSpeed;
 
-        var block = LevelObjectsFactory.createBlock(0, 100, 0.00, "Block_Normal_1", false, this.space, this.containerLevelObjects);
-        this.blocks.push(block);
-        block.userData.movementComponents.push(new LevelObjectWaypointMoveComponent(block,
-            [{x: 80, y: 500}, {x: 400, y: 500}],
-            3, 0, GeometrumEase.easeInQuad));
-        // block.userData.movementComponents.push(new LevelObjectAngularMoveComponent(block, 20));
-
-        this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
+        LevelsBuilder.buildLevel(this);
+        this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerBall, GameConstants.SPRITE_NAME_BALL));
         this.balls[0].setVel(cc.p(5, 70));
-
-        // this.balls.push(LevelObjectsFactory.addBall(300, 150, this.space, this.containerLevelObjects, GameConstants.SPRITE_NAME_BALL));
-        // this.balls[1].setVel(cc.p(-5, 120));
     },
 
     initLayers: function () {
@@ -70,6 +65,7 @@ var GamefieldScene = cc.Scene.extend({
         this.containerUi = new cc.Node();
         this.containerArea = new cc.Node();
         this.containerLevelObjects = new cc.Node();
+        this.containerBall = new cc.Node();
         this.containerParticles = new cc.Node();
 
         this.addChild(this.containerBg);
@@ -77,6 +73,7 @@ var GamefieldScene = cc.Scene.extend({
         this.addChild(this.containerUi);
         this.containerFg.addChild(this.containerArea);
         this.containerFg.addChild(this.containerLevelObjects);
+        this.containerFg.addChild(this.containerBall);
         this.containerFg.addChild(this.containerParticles);
 
         this.drawNodeTouch = new cc.DrawNode();
@@ -162,17 +159,29 @@ var GamefieldScene = cc.Scene.extend({
 
         this.blocksLeft -= 1;
         if (this.blocksLeft <= 0) {
-            console.log("Level " + this.level.toString() + " won");
-            this.level += 1;
-            Paddle.removePaddle(this);
-            Paddle.removeListeners();
-            this.updateCallback = this.updateTransitingLevel;
-            LevelTransition.transitToNextLevel(this);
+            this.processLevelWon();
         }
     },
 
     processBallTouchedDangerousBlock: function (ball, levelObject) {
 
+    },
+
+    processLevelWon: function () {
+        console.log("Level " + this.level.toString() + " won");
+        this.level += 1;
+        Paddle.removePaddle(this);
+        Paddle.removeListeners();
+        this.ballSpeedCallback = this.ballSlowDownMoveToCenter;
+        LevelTransition.transitToNextLevel(this);
+    },
+
+    removeAllBlocksWithSplash: function () {
+        for (var i = 0; i < this.blocks.length; i++) {
+            if (this.bodiesToRemove.indexOf(this.blocks[i] < 0)) {
+
+            }
+        }
     },
 
     update: function (dt) {
@@ -187,13 +196,6 @@ var GamefieldScene = cc.Scene.extend({
         this.addScheduledBodies();
     },
 
-    updateTransitingLevel: function (dt) {
-        this.space.step(dt);
-        this.fadeOutBallsSpeed(dt);
-        this.removeMarkedBodies();
-        this.addScheduledBodies();
-    },
-
     updateBlocks: function (dt) {
         for (var i = 0; i < this.blocks.length; i++) {
             this.blocks[i].userData.update(dt, this);
@@ -204,7 +206,7 @@ var GamefieldScene = cc.Scene.extend({
         for (var i = 0; i < this.balls.length; i++) {
             var ball = this.balls[i];
             this.checkBallOutOfScreen(ball);
-            this.limitBallSpeed(ball, dt);
+            this.ballSpeedCallback(ball, dt);
         }
     },
 
@@ -241,16 +243,53 @@ var GamefieldScene = cc.Scene.extend({
         ball.setVel(ball.getVelocity().mult(newMagnitude / magnitude));
     },
 
-    fadeOutBallsSpeed: function (dt) {
-        for (var i = 0; i < this.balls.length; i++) {
-            var ball = this.balls[i];
-            var magnitude = Math.sqrt((ball.getVelocity().x * ball.getVelocity().x) + (ball.getVelocity().y * ball.getVelocity().y));
-            if (magnitude <= 5) {
-                ball.setVel(ball.getVelocity().mult(0));
-            }
-            else {
-                ball.setVel(ball.getVelocity().mult(0.98));
-            }
+    fadeOutBallSpeed: function (ball, dt) {
+        var magnitude = Math.sqrt((ball.getVelocity().x * ball.getVelocity().x) + (ball.getVelocity().y * ball.getVelocity().y));
+        if (magnitude <= 5) {
+            ball.setVel(ball.getVelocity().mult(0));
+        }
+        else {
+            ball.setVel(ball.getVelocity().mult(0.98));
+        }
+    },
+
+    fadeInBallSpeed: function (ball, dt) {
+        var magnitude = Math.sqrt((ball.getVelocity().x * ball.getVelocity().x) + (ball.getVelocity().y * ball.getVelocity().y));
+        if (magnitude >= this.minBallSpeed) {
+            ball.setVel(ball.getVelocity().mult(this.minBallSpeed / magnitude));
+            this.ballSpeedCallback = this.limitBallSpeed;
+        }
+        else {
+            ball.setVel(ball.getVelocity().mult(1.025));
+        }
+    },
+
+    ballSlowDownTime: 0,
+    ballSlowDownDuration: 2,
+    ballPrevWaypoint: null,
+    currentWaypoint: {x: 240, y: 360},
+    ballSlowDownMoveToCenter: function (ball, dt) {
+        if (this.ballPrevWaypoint == null) {
+            this.ballPrevWaypoint = ball.getPos();
+        }
+        this.ballSlowDownTime += dt;
+        if (this.ballSlowDownTime >= this.ballSlowDownDuration) {
+            this.ballSlowDownTime = this.ballSlowDownDuration;
+        }
+        var currentPosition = ball.getPos();
+        var newX = GeometrumEase.easeNone(this.ballSlowDownTime, this.ballPrevWaypoint.x, this.currentWaypoint.x - this.ballPrevWaypoint.x, this.ballSlowDownDuration);
+        var newY = GeometrumEase.easeNone(this.ballSlowDownTime, this.ballPrevWaypoint.y, this.currentWaypoint.y - this.ballPrevWaypoint.y, this.ballSlowDownDuration);
+        var diffX = newX - currentPosition.x;
+        var diffY = newY - currentPosition.y;
+        ball.setVel({
+            x: (diffX / dt) / this.ballSlowDownDuration,
+            y: (diffY / dt) / this.ballSlowDownDuration
+        });
+        if (this.ballSlowDownTime >= this.ballSlowDownDuration) {
+            this.ballSlowDownTime = 0;
+            this.ballSpeedCallback = function (ball, dt) {
+            };
+            this.ballPrevWaypoint = null;
         }
     },
 
@@ -264,6 +303,10 @@ var GamefieldScene = cc.Scene.extend({
             velX: velX,
             velY: velY
         });
+    },
+
+    scheduleAddBody2: function (scheduledBodyInfo) {
+        this.bodiesToCreate.push(scheduledBodyInfo);
     },
 
     addScheduledBodies: function () {
@@ -385,22 +428,6 @@ var Paddle = {
         this.updatePaddleEndCoords(touchX, touchY, this.gamefield);
         this.displayPaddleBeingDrawn(this.paddleEndCoords.x, this.paddleEndCoords.y, this.gamefield);
 
-        /*
-         if (this.paddle != null) {
-         this.paddle.shapeList[0].setEndpoints(cc.p(this.touchStartCoords.x, this.touchStartCoords.y), cc.p(this.paddleEndCoords.x, this.paddleEndCoords.y));
-         // this.paddle.shapeList[0].bb_l = this.touchStartCoords.x;
-         // this.paddle.shapeList[0].ta.x = this.touchStartCoords.x;
-         // this.paddle.shapeList[0].bb_b = this.touchStartCoords.y;
-         // this.paddle.shapeList[0].ta_y = this.touchStartCoords.y;
-         // this.paddle.shapeList[0].bb_r = this.paddleEndCoords.x;
-         // this.paddle.shapeList[0].tb_x = this.paddleEndCoords.x;
-         // this.paddle.shapeList[0].bb_t = this.paddleEndCoords.y;
-         // this.paddle.shapeList[0].tb_y = this.paddleEndCoords.y;
-         this.paddle.shapeList[0].cacheBB();
-         }
-         */
-
-
         // todo: might be horrible for performance
         if (this.paddle != null) {
             this.gamefield.scheduleRemoveBody(this.paddle);
@@ -440,9 +467,6 @@ var Paddle = {
         if (this.isPaddleBeingDrawn == false) {
             return;
         }
-        // if (this.paddle != null) {
-        //     console.log(this.paddle.shapeList[0].bb_l, this.paddle.shapeList[0].bb_b, " - ", this.paddle.shapeList[0].bb_r, this.paddle.shapeList[0].bb_t);
-        // }
         this.isPaddleBeingDrawn = false;
         this.gamefield.drawNodeTouch.clear();
         this.removeSplashCircle();
@@ -457,6 +481,7 @@ var Paddle = {
             this.removePaddle(gamefield);
         }
 
+        this.displayPaddleBeingDrawn(this.paddleEndCoords.x, paddleEndCoords.y);
         this.paddle = LevelObjectsFactory.addPaddle(new cp.v(this.touchStartCoords.x, this.touchStartCoords.y), new cp.v(this.paddleEndCoords.x, this.paddleEndCoords.y), this.gamefield.space);
     },
 
@@ -478,44 +503,38 @@ var LevelTransition = {
     transitToNextLevel: function (gamefield) {
         this.gamefield = gamefield;
         this.destroyAllRemainingBlocks();
-        this.slideForegroundDown();
+        this.doWait();
     },
 
     destroyAllRemainingBlocks: function () {
 
     },
 
-    slideForegroundDown: function () {
-        var duration = 2;
-        var fgMoveBy = cc.moveBy(duration, 0, -GameConstants.APP_HEIGHT).easing(cc.easeCubicActionIn());
+    doWait: function () {
+        var duration = 3;
+        var waitAction = cc.moveBy(duration, 0, 0);
         var switchToNextPart = cc.callFunc(this.generateNextLevel, this);
-        this.gamefield.containerFg.runAction(cc.sequence(fgMoveBy, switchToNextPart));
+        this.gamefield.containerFg.runAction(cc.sequence(waitAction, switchToNextPart));
     },
 
     generateNextLevel: function () {
         console.log("Generating new level");
-        for (var i = 0; i < this.gamefield.level; i++) {
-            this.gamefield.scheduleAddBody(Math.random() * 400 + 40, Math.random() * 380 + 300, Math.random() * 360, "Block_Normal_1", true, 0, 0)
-        }
-        this.gamefield.addScheduledBodies();
-        this.gamefield.blocksLeft = this.gamefield.level;
 
-        this.gamefield.containerFg.setPosition(0, GameConstants.APP_HEIGHT);
+        LevelsBuilder.buildLevel(this.gamefield);
+
+        this.gamefield.containerLevelObjects.setPosition(0, GameConstants.APP_HEIGHT);
 
         var duration = 2;
-        var fgMoveBy = cc.moveBy(duration, 0, -GameConstants.APP_HEIGHT).easing(cc.easeCubicActionIn());
+        var fgMoveBy = cc.moveBy(duration, 0, -GameConstants.APP_HEIGHT).easing(cc.easeCubicActionInOut());
         var switchToNextPart = cc.callFunc(this.continueNextLevel, this);
-        this.gamefield.containerFg.runAction(cc.sequence(fgMoveBy, switchToNextPart));
-        this.gamefield.updateCallback = function (dt) {
-        };
+        this.gamefield.containerLevelObjects.runAction(cc.sequence(fgMoveBy, switchToNextPart));
     },
 
     continueNextLevel: function () {
         for (var i = 0; i < this.gamefield.balls.length; i++) {
-            this.gamefield.balls[i].setPos(cp.v(240, -50));
-            this.gamefield.balls[i].setVel(cp.v(0, 1));
+            this.gamefield.balls[i].setVel(cp.v(0, -20));
         }
         Paddle.addListeners();
-        this.gamefield.updateCallback = this.gamefield.updateNormal;
+        this.gamefield.ballSpeedCallback = this.gamefield.fadeInBallSpeed;
     }
 };

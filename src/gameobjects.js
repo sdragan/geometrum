@@ -178,8 +178,6 @@ var LevelObjectWaypointMoveComponent = function (levelObject, waypoints, duratio
         this.tempPoint.y = (diffY / dt) / this.duration;
         this.levelObject.setVel(this.tempPoint);
 
-        // console.log(this.time.toFixed(3), this.tempPoint.x.toFixed(2), this.tempPoint.y.toFixed(2), currentPosition.x.toFixed(2), currentPosition.y.toFixed(2));
-
         this.processWaypointReached();
     };
 
@@ -502,4 +500,85 @@ var LevelObjectsFactory = {
     }
 };
 
-LevelsBuilder = {};
+LevelsBuilder = {
+    buildLevel: function (gamefield) {
+        var blocks = gamefield.blocks;
+        var level = gamefield.level;
+        var space = gamefield.space;
+        var container = gamefield.containerLevelObjects;
+        var block;
+
+        if (level == 0) {
+            block = LevelObjectsFactory.createBlock(0, 100, 0.00, "Block_Normal_1", false, space, container);
+            blocks.push(block);
+            block.userData.movementComponents.push(new LevelObjectWaypointMoveComponent(block,
+                [{x: 80, y: 500}, {x: 400, y: 500}],
+                3, 0, GeometrumEase.easeInQuad));
+            block.userData.movementComponents.push(new LevelObjectAngularMoveComponent(block, 10));
+            gamefield.blocksLeft = 1;
+        }
+        else {
+            for (var i = 0; i < level; i++) {
+                blocks.push(LevelObjectsFactory.createBlock(Math.random() * 480, Math.random() * 400 + 300, Math.random() * 360, "Block_Normal_1", true, space, container));
+            }
+            gamefield.blocksLeft = level;
+        }
+    }
+};
+
+var ScheduledObjectBuilder = function () {
+    this._objX = 0;
+    this._objY = 0;
+    this._objAngle = 0;
+    this._spriteName = "";
+    this._isStatic = true;
+    this._velX = 0;
+    this._velY = 0;
+
+    this.x = function (value) {
+        this._objX = value;
+        return this;
+    };
+
+    this.y = function (value) {
+        this._objY = value;
+        return this;
+    };
+
+    this.angle = function (value) {
+        this._objAngle = value;
+        return this;
+    };
+
+    this.spriteName = function (value) {
+        this._spriteName = value;
+        return this;
+    };
+
+    this.isStatic = function (value) {
+        this._isStatic = value;
+        return this;
+    };
+
+    this.velX = function (value) {
+        this._velX = value;
+        return this;
+    };
+
+    this.velY = function (value) {
+        this._velY = value;
+        return this;
+    };
+
+    this.build = function () {
+        return {
+            objX: this._objX,
+            objY: this._objY,
+            objAngle: this._objAngle,
+            spriteName: this._spriteName,
+            isStatic: this._isStatic,
+            velX: this._velX,
+            velY: this._velY
+        }
+    }
+};
