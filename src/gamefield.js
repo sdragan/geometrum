@@ -481,7 +481,7 @@ var Paddle = {
             this.removePaddle(gamefield);
         }
 
-        this.displayPaddleBeingDrawn(this.paddleEndCoords.x, paddleEndCoords.y);
+        this.displayPaddleBeingDrawn(this.paddleEndCoords.x, this.paddleEndCoords.y);
         this.paddle = LevelObjectsFactory.addPaddle(new cp.v(this.touchStartCoords.x, this.touchStartCoords.y), new cp.v(this.paddleEndCoords.x, this.paddleEndCoords.y), this.gamefield.space);
     },
 
