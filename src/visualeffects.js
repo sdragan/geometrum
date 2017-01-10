@@ -5,7 +5,7 @@ VisualEffectFlash = function (gamefield) {
     this.doFlash = function () {
         this.gamefield.addChild(this.flashGradientLayer);
         this.flashGradientLayer.setOpacity(0);
-        this.flashGradientLayer.runAction(cc.sequence(cc.fadeIn(0.2), cc.fadeOut(0.2), cc.callFunc(this.doRemoveFlash, this)));
+        this.flashGradientLayer.runAction(cc.sequence(cc.fadeIn(0), cc.fadeOut(0.4), cc.callFunc(this.doRemoveFlash, this)));
     };
 
     this.doRemoveFlash = function () {
