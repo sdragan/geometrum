@@ -22,6 +22,7 @@ var GamefieldScene = cc.Scene.extend({
 
     effectFlash: null,
     effectScreenshake: null,
+    effectPauseOverlay: null,
     effectTintLevelObjects: null,
 
     blocksHitInRow: 0,
@@ -88,6 +89,7 @@ var GamefieldScene = cc.Scene.extend({
     initEffects: function () {
         this.effectFlash = new VisualEffectFlash(this);
         this.effectScreenshake = new VisualEffectScreenshake(this);
+        this.effectPauseOverlay = new VisualEffectPauseOverlay(this);
         this.effectTintLevelObjects = new VisualEffectTintLevelObjects(this);
     },
 
@@ -184,6 +186,10 @@ var GamefieldScene = cc.Scene.extend({
         }
     },
 
+    retry: function () {
+
+    },
+
     update: function (dt) {
         this.updateCallback(dt);
     },
@@ -219,9 +225,27 @@ var GamefieldScene = cc.Scene.extend({
 
     processBallLost: function (ball) {
         this.scheduleRemoveBody(ball);
+        this.effectFlash.doFlash();
+        this.scheduleRemoveBody(ball);
         if (this.balls.length == 1) {
             console.log("Lost");
+            this.processGameLost();
         }
+    },
+
+    processGameLost: function () {
+        var delayDuration = 3;
+        var delayAction = cc.moveBy(delayDuration, 0, 0);
+        var postDelayFuncAction = cc.callFunc(this.showPostLevelMenu, this);
+        this.containerBg.runAction(cc.sequence(delayAction, postDelayFuncAction));
+        Paddle.removeListeners();
+    },
+
+    postLevelMenu: null,
+    showPostLevelMenu: function () {
+        this.postLevelMenu = new PostLevelMenu(this);
+        this.postLevelMenu.init();
+
     },
 
     limitBallSpeed: function (ball, dt) {

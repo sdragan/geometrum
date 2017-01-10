@@ -18,5 +18,45 @@ VisualEffectScreenshake = function (gamefield) {
 };
 
 VisualEffectTintLevelObjects = function (gamefield) {
+    this.gamefield = gamefield;
 
+    this.tintAllObjectsTo = function (duration, r, g, b, callback) {
+        var tintAction = cc.tintTo(duration, r, g, b);
+        var i;
+
+        for (i = 0; i < this.gamefield.blocks.length; i++) {
+            if (this.gamefield.blocks[i].userData.sprite != null) {
+                this.gamefield.blocks[i].userData.sprite.runAction(tintAction.clone());
+            }
+        }
+        for (i = 0; i < this.gamefield.balls.length; i++) {
+            this.gamefield.balls[i].userData.sprite.runAction(tintAction.clone());
+        }
+
+        /*
+         if (this.paddleSprite != null) {
+         this.paddleSprite.runAction(tintAction.clone());
+         }
+         */
+
+        if (callback != null) {
+            var moveByAction = cc.moveBy(duration, 0, 0);
+            var callFuncAction = cc.callFunc(callback, this);
+            this.gamefield.containerBg.runAction(cc.sequence(moveByAction, callFuncAction));
+        }
+    }
+};
+
+VisualEffectPauseOverlay = function (gamefield) {
+    this.gamefield = gamefield;
+    this.overlayDrawNode = new cc.DrawNode();
+    this.overlayDrawNode.drawRect(cc.p(0, 0), cc.p(GameConstants.APP_WIDTH, GameConstants.APP_HEIGHT), cc.color(0, 0, 0, 100), 0, cc.color(0, 0, 0));
+
+    this.show = function () {
+        this.gamefield.containerFg.addChild(this.overlayDrawNode);
+    };
+
+    this.hide = function () {
+        this.overlayDrawNode.removeFromParent();
+    }
 };
