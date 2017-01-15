@@ -29,6 +29,9 @@ var GamefieldScene = cc.Scene.extend({
     score: 0,
     level: 0,
 
+    preLevelMenu: null,
+    postLevelMenu: null,
+
     initVars: function () {
         this.space = null;
         this.bodiesToRemove = [];
@@ -48,16 +51,29 @@ var GamefieldScene = cc.Scene.extend({
         this.initPhysics();
         this.addWalls();
         Paddle.init(this);
-        Paddle.addListeners();
         // this.initDebugMode();
         this.scheduleUpdate();
 
         this.updateCallback = this.updateNormal;
-        this.ballSpeedCallback = this.limitBallSpeed;
+        this.ballSpeedCallback = function (ball, dt) {
+        };
 
         LevelsBuilder.buildLevel(this);
-        this.balls.push(LevelObjectsFactory.addBall(160, 150, this.space, this.containerBall, GameConstants.SPRITE_NAME_BALL));
-        this.balls[0].setVel(cc.p(5, 70));
+        this.createBallAtInitialPosition();
+
+        this.preLevelMenu = new PreLevelMenu(this);
+        this.preLevelMenu.init();
+    },
+
+    createBallAtInitialPosition: function () {
+        this.balls.push(LevelObjectsFactory.addBall(GameConstants.APP_WIDTH / 2, GameConstants.APP_HEIGHT / 2, this.space, this.containerBall, GameConstants.SPRITE_NAME_BALL));
+    },
+
+    setInitialBallVelocity: function () {
+        for (var i = 0; i < this.balls.length; i++) {
+            this.balls[i].setVel(cp.v(0, GameConstants.INITIAL_BALL_VEL_Y));
+        }
+        this.ballSpeedCallback = this.fadeInBallSpeed;
     },
 
     initLayers: function () {
@@ -181,7 +197,8 @@ var GamefieldScene = cc.Scene.extend({
     removeAllBlocksWithSplash: function () {
         for (var i = 0; i < this.blocks.length; i++) {
             if (this.bodiesToRemove.indexOf(this.blocks[i] < 0)) {
-
+                this.bodiesToRemove.push(this.blocks[i]);
+                // todo: and an explosion effect
             }
         }
     },
@@ -241,11 +258,20 @@ var GamefieldScene = cc.Scene.extend({
         Paddle.removeListeners();
     },
 
-    postLevelMenu: null,
     showPostLevelMenu: function () {
+        // todo: decide whether to show PostLevelMenu or PostLevelContinueMenu
+        if (false) {
+            this.postLevelContinueMenu = new PostLevelContinueMenu(this);
+            this.postLevelContinueMenu.init();
+        }
+        else {
+            this.proceedToPostLevelMenu();
+        }
+    },
+
+    proceedToPostLevelMenu: function () {
         this.postLevelMenu = new PostLevelMenu(this);
         this.postLevelMenu.init();
-
     },
 
     limitBallSpeed: function (ball, dt) {
@@ -370,6 +396,31 @@ var GamefieldScene = cc.Scene.extend({
         }
 
         this.bodiesToRemove = [];
+    },
+
+    resetToMainMenu: function () {
+        var i;
+        for (i = 0; i < this.balls.length; i++) {
+            this.scheduleRemoveBody(this.balls[i]);
+        }
+        for (i = 0; i < this.blocks.length; i++) {
+            this.scheduleRemoveBody(this.blocks[i]);
+        }
+        Paddle.removePaddle(this);
+        this.removeMarkedBodies();
+
+        this.level = 0;
+        LevelsBuilder.buildLevel(this);
+        this.createBallAtInitialPosition();
+        this.preLevelMenu = new PreLevelMenu(this);
+        this.preLevelMenu.init();
+        this.ballSpeedCallback = function (ball, dt) {
+        };
+    },
+
+    startFromMainMenu: function () {
+        this.setInitialBallVelocity();
+        Paddle.addListeners();
     }
 });
 
@@ -555,10 +606,7 @@ var LevelTransition = {
     },
 
     continueNextLevel: function () {
-        for (var i = 0; i < this.gamefield.balls.length; i++) {
-            this.gamefield.balls[i].setVel(cp.v(0, -20));
-        }
+        this.gamefield.setInitialBallVelocity();
         Paddle.addListeners();
-        this.gamefield.ballSpeedCallback = this.gamefield.fadeInBallSpeed;
     }
 };

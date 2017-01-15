@@ -11,7 +11,7 @@ var PostLevelMenu = function (gamefield) {
     this.RETRY_BUTTON_COORDS_HIDDEN = {x: 540, y: 360};
 
     this.init = function () {
-        this.gamefield.effectTintLevelObjects.tintAllObjectsTo(0.3, 30, 30, 30);
+        this.gamefield.effectTintLevelObjects.tintAllObjectsTo(30, 30, 30);
         this.gamefield.effectPauseOverlay.show();
         this.createButtons();
 
@@ -48,7 +48,7 @@ var PostLevelMenu = function (gamefield) {
     };
 
     this.onExitButton = function () {
-        this.hidePostLevelMenu(this.exitCallback);
+        this.hidePostLevelMenu(this.retryCallback);
     };
 
     this.onRetryButton = function () {
@@ -86,17 +86,21 @@ var PostLevelMenu = function (gamefield) {
 
     this.retryCallback = function () {
         this.cleanUp();
+        this.gamefield.effectTintLevelObjects.untint();
         this.gamefield.effectPauseOverlay.hide();
-        // this.gamefield.retry();
-    };
-
-    this.exitCallback = function () {
-        this.cleanUp();
-        // this.gamefield.exitToLevelMapThis();
+        this.gamefield.resetToMainMenu();
     };
 
     this.cleanUp = function () {
         this.exitButton.removeFromParent();
         this.retryButton.removeFromParent();
+    }
+};
+
+var PostLevelContinueMenu = function (gamefield) {
+    this.gamefield = gamefield;
+
+    this.init = function () {
+
     }
 };

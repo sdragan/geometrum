@@ -509,7 +509,7 @@ LevelsBuilder = {
         var block;
 
         if (level == 0) {
-            block = LevelObjectsFactory.createBlock(0, 100, 0.00, "Block_Normal_1", false, space, container);
+            block = LevelObjectsFactory.createBlock(80, 500, 0.00, "Block_Normal_1", false, space, container);
             blocks.push(block);
             block.userData.movementComponents.push(new LevelObjectWaypointMoveComponent(block,
                 [{x: 80, y: 500}, {x: 400, y: 500}],

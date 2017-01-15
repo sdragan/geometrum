@@ -111,6 +111,7 @@ var GameConstants = {
     INITIAL_BALL_X: 240,
     INITIAL_BALL_Y: -300,
     MIN_BALL_SPEED: 300,
+    INITIAL_BALL_VEL_Y: -20,
 
     SPRITE_NAME_BALL: "NeuBall"
 };

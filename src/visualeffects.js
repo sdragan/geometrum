@@ -19,9 +19,10 @@ VisualEffectScreenshake = function (gamefield) {
 
 VisualEffectTintLevelObjects = function (gamefield) {
     this.gamefield = gamefield;
+    this.DEFAULT_DURATION = 0.3;
 
-    this.tintAllObjectsTo = function (duration, r, g, b, callback) {
-        var tintAction = cc.tintTo(duration, r, g, b);
+    this.tintAllObjectsTo = function (r, g, b, callback) {
+        var tintAction = cc.tintTo(this.DEFAULT_DURATION, r, g, b);
         var i;
 
         for (i = 0; i < this.gamefield.blocks.length; i++) {
@@ -40,10 +41,14 @@ VisualEffectTintLevelObjects = function (gamefield) {
          */
 
         if (callback != null) {
-            var moveByAction = cc.moveBy(duration, 0, 0);
+            var moveByAction = cc.moveBy(this.DEFAULT_DURATION, 0, 0);
             var callFuncAction = cc.callFunc(callback, this);
             this.gamefield.containerBg.runAction(cc.sequence(moveByAction, callFuncAction));
         }
+    };
+
+    this.untint = function () {
+        this.tintAllObjectsTo(255, 255, 255, null);
     }
 };
 
