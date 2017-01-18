@@ -501,14 +501,62 @@ var LevelObjectsFactory = {
 };
 
 LevelsBuilder = {
-    buildLevel: function (gamefield) {
-        var blocks = gamefield.blocks;
-        var level = gamefield.level;
-        var space = gamefield.space;
-        var container = gamefield.containerLevelObjects;
-        var block;
+    rangeBoundaries: [0, 2, 5],
+    levelsPool: [[], [], []],
+    availableLevels: [],
 
-        if (level == 0) {
+    buildLevel: function (gamefield) {
+        var levelBuildFunction = this.selectLevel(gamefield.level);
+        levelBuildFunction(gamefield);
+    },
+
+    selectLevel: function (level) {
+        var range = this.getRange(level);
+        if (this.isFirstInRange(level)) {
+            this.availableLevels = [];
+        }
+
+        if (this.availableLevels.length == 0) {
+            this.fillAvailableLevelsList(range);
+        }
+
+        var levelBuildFunction = this.getLevelFromPool(range);
+        return levelBuildFunction;
+    },
+
+    isFirstInRange: function (level) {
+        return this.rangeBoundaries.indexOf(level) >= 0;
+    },
+
+    getRange: function (level) {
+        for (var i = 0; i < this.rangeBoundaries.length; i++) {
+            if (level < this.rangeBoundaries[i]) {
+                return i - 1;
+            }
+        }
+        return this.rangeBoundaries.length;
+    },
+
+    fillAvailableLevelsList: function (range) {
+        for (var i = 0; i < this.levelsPool[range].length; i++) {
+            this.availableLevels.push(this.levelsPool[range][i]);
+        }
+    },
+
+    getLevelFromPool: function () {
+        var levelIndex = Math.floor(Math.random() * this.availableLevels.length);
+        var currentLevel = this.availableLevels[levelIndex];
+        this.availableLevels.splice(levelIndex, 1);
+        return currentLevel;
+    },
+
+    init: function () {
+        this.levelsPool[0].push(function (gamefield) {
+            var blocks = gamefield.blocks;
+            var space = gamefield.space;
+            var container = gamefield.containerLevelObjects;
+            var block;
+
             block = LevelObjectsFactory.createBlock(80, 500, 0.00, "Block_Normal_1", false, space, container);
             blocks.push(block);
             block.userData.movementComponents.push(new LevelObjectWaypointMoveComponent(block,
@@ -516,15 +564,21 @@ LevelsBuilder = {
                 3, 0, GeometrumEase.easeInQuad));
             block.userData.movementComponents.push(new LevelObjectAngularMoveComponent(block, 10));
             gamefield.blocksLeft = 1;
-        }
-        else {
+        });
+
+        this.levelsPool[1].push(function (gamefield) {
+            var blocks = gamefield.blocks;
+            var space = gamefield.space;
+            var container = gamefield.containerLevelObjects;
+            var level = gamefield.level;
+
             for (var i = 0; i < level; i++) {
                 blocks.push(LevelObjectsFactory.createBlock(Math.random() * 480, Math.random() * 400 + 300, Math.random() * 360, "Block_Normal_1", false, space, container));
                 var moveComponent = new LevelObjectAngularMoveComponent(blocks[blocks.length - 1], Math.random() * 8);
                 blocks[blocks.length - 1].userData.movementComponents.push(moveComponent);
             }
             gamefield.blocksLeft = level;
-        }
+        });
     }
 };
 

@@ -71,6 +71,7 @@ cc.game.onStart = function(){
         GameStateModel.init();
         GameSoundManager.init();
         GameParticleManager.init();
+        LevelsBuilder.init();
 
         var gamefieldScene = new GamefieldScene();
         cc.director.runScene(gamefieldScene);
