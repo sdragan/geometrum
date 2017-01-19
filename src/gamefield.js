@@ -54,26 +54,7 @@ var GamefieldScene = cc.Scene.extend({
         // this.initDebugMode();
         this.scheduleUpdate();
 
-        this.updateCallback = this.updateNormal;
-        this.ballSpeedCallback = function (ball, dt) {
-        };
-
-        LevelsBuilder.buildLevel(this);
-        this.createBallAtInitialPosition();
-
-        this.preLevelMenu = new PreLevelMenu(this);
-        this.preLevelMenu.init();
-    },
-
-    createBallAtInitialPosition: function () {
-        this.balls.push(LevelObjectsFactory.addBall(GameConstants.APP_WIDTH / 2, GameConstants.APP_HEIGHT / 2, this.space, this.containerBall, GameConstants.SPRITE_NAME_BALL));
-    },
-
-    setInitialBallVelocity: function () {
-        for (var i = 0; i < this.balls.length; i++) {
-            this.balls[i].setVel(cp.v(0, GameConstants.INITIAL_BALL_VEL_Y));
-        }
-        this.ballSpeedCallback = this.fadeInBallSpeed;
+        this.createPreLevelAndMainMenu();
     },
 
     initLayers: function () {
@@ -130,6 +111,30 @@ var GamefieldScene = cc.Scene.extend({
         LevelObjectsFactory.addWall(new cp.v(-wH, 0), new cp.v(-wH, winSize.height), this.space);
         LevelObjectsFactory.addWall(new cp.v(winSize.width + wH, winSize.height), new cp.v(winSize.width + wH, 0), this.space);
         LevelObjectsFactory.addWall(new cp.v(0, winSize.height + wH), new cp.v(winSize.width, winSize.height + wH), this.space);
+    },
+
+    createPreLevelAndMainMenu: function () {
+        this.updateCallback = this.updateNormal;
+        this.level = 0;
+        LevelsBuilder.buildLevel(this);
+        this.createBallAtInitialPosition();
+        this.preLevelMenu = new PreLevelMenu(this);
+        this.preLevelMenu.init();
+        Paddle.addListeners();
+        Paddle.setPaddleFinishedCallback(this.startFromMainMenu);
+        this.ballSpeedCallback = function (ball, dt) {
+        };
+    },
+
+    createBallAtInitialPosition: function () {
+        this.balls.push(LevelObjectsFactory.addBall(GameConstants.APP_WIDTH / 2, GameConstants.APP_HEIGHT / 2, this.space, this.containerBall, GameConstants.SPRITE_NAME_BALL));
+    },
+
+    setInitialBallVelocity: function () {
+        for (var i = 0; i < this.balls.length; i++) {
+            this.balls[i].setVel(cp.v(0, GameConstants.INITIAL_BALL_VEL_Y));
+        }
+        this.ballSpeedCallback = this.fadeInBallSpeed;
     },
 
     collisionHandler: function (arbiter, space) {
@@ -255,6 +260,7 @@ var GamefieldScene = cc.Scene.extend({
         var delayAction = cc.moveBy(delayDuration, 0, 0);
         var postDelayFuncAction = cc.callFunc(this.showPostLevelMenu, this);
         this.containerBg.runAction(cc.sequence(delayAction, postDelayFuncAction));
+        Paddle.removePaddle(this);
         Paddle.removeListeners();
     },
 
@@ -409,18 +415,12 @@ var GamefieldScene = cc.Scene.extend({
         Paddle.removePaddle(this);
         this.removeMarkedBodies();
 
-        this.level = 0;
-        LevelsBuilder.buildLevel(this);
-        this.createBallAtInitialPosition();
-        this.preLevelMenu = new PreLevelMenu(this);
-        this.preLevelMenu.init();
-        this.ballSpeedCallback = function (ball, dt) {
-        };
+        this.createPreLevelAndMainMenu();
     },
 
     startFromMainMenu: function () {
         this.setInitialBallVelocity();
-        Paddle.addListeners();
+        // Paddle.addListeners();
     }
 });
 
@@ -432,12 +432,18 @@ var Paddle = {
     splashCircle: null,
     gamefield: null,
 
+
     init: function (gamefield) {
         this.touchStartCoords = {x: 0, y: 0};
         this.paddleEndCoords = {x: 0, y: 0};
         this.paddle = null;
         this.isPaddleBeingDrawn = false;
         this.gamefield = gamefield;
+    },
+
+    paddleFinishedCallback: null,
+    setPaddleFinishedCallback: function (callback) {
+        this.paddleFinishedCallback = callback;
     },
 
     addListeners: function () {
@@ -558,6 +564,11 @@ var Paddle = {
 
         this.displayPaddleBeingDrawn(this.paddleEndCoords.x, this.paddleEndCoords.y);
         this.paddle = LevelObjectsFactory.addPaddle(new cp.v(this.touchStartCoords.x, this.touchStartCoords.y), new cp.v(this.paddleEndCoords.x, this.paddleEndCoords.y), this.gamefield.space);
+
+        if (this.paddleFinishedCallback != null) {
+            this.paddleFinishedCallback.call(this.gamefield);
+            this.paddleFinishedCallback = null;
+        }
     },
 
     removePaddle: function (gamefield) {
