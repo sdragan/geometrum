@@ -283,7 +283,7 @@ var GamefieldScene = cc.Scene.extend({
     limitBallSpeed: function (ball, dt) {
         var magnitude = Math.sqrt((ball.getVelocity().x * ball.getVelocity().x) + (ball.getVelocity().y * ball.getVelocity().y));
         if (magnitude >= this.minBallSpeed) {
-            return;
+            // return;
         }
         var accelerationPerSecond = 10000;
         var acceleration = accelerationPerSecond * dt;
@@ -419,8 +419,9 @@ var GamefieldScene = cc.Scene.extend({
     },
 
     startFromMainMenu: function () {
+        Paddle.removePaddleFinishedCallback();
         this.setInitialBallVelocity();
-        // Paddle.addListeners();
+        this.preLevelMenu.cleanUp();
     }
 });
 
@@ -444,6 +445,9 @@ var Paddle = {
     paddleFinishedCallback: null,
     setPaddleFinishedCallback: function (callback) {
         this.paddleFinishedCallback = callback;
+    },
+    removePaddleFinishedCallback: function () {
+        this.paddleFinishedCallback = null;
     },
 
     addListeners: function () {
@@ -567,7 +571,7 @@ var Paddle = {
 
         if (this.paddleFinishedCallback != null) {
             this.paddleFinishedCallback.call(this.gamefield);
-            this.paddleFinishedCallback = null;
+            this.removePaddleFinishedCallback();
         }
     },
 

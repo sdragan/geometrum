@@ -29,4 +29,8 @@ var PreLevelMenu = function (gamefield) {
         this.resumeButton.removeFromParent();
         this.gamefield.startFromMainMenu();
     };
+
+    this.cleanUp = function () {
+        this.resumeButton.removeFromParent();
+    }
 };
