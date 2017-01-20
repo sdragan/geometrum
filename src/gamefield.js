@@ -24,6 +24,7 @@ var GamefieldScene = cc.Scene.extend({
     effectScreenshake: null,
     effectPauseOverlay: null,
     effectTintLevelObjects: null,
+    effectBackgroundHighlight: null,
 
     blocksHitInRow: 0,
     score: 0,
@@ -88,6 +89,7 @@ var GamefieldScene = cc.Scene.extend({
         this.effectScreenshake = new VisualEffectScreenshake(this);
         this.effectPauseOverlay = new VisualEffectPauseOverlay(this);
         this.effectTintLevelObjects = new VisualEffectTintLevelObjects(this);
+        this.effectBackgroundHighlight = new VisualEffectBackgroundHighlight(this);
     },
 
     initPhysics: function () {
@@ -195,10 +197,22 @@ var GamefieldScene = cc.Scene.extend({
         this.level += 1;
         Paddle.removePaddle(this);
         Paddle.removeListeners();
-        this.ballSpeedCallback = this.ballSlowDownMoveToCenter;
+        this.ballSpeedCallback = this.fadeOutBallSpeed;
         LevelTransition.transitToNextLevel(this);
+        this.moveBallToScreenCenter(this.balls[0]);
     },
 
+    moveBallToScreenCenter: function (ball) {
+        var waitAction = cc.moveBy(1.5, 0, 0);
+        var shrinkAction = cc.scaleTo(0.3, 0, 0).easing(cc.easeQuadraticActionOut());
+        var moveToCenterAction = cc.callFunc(function () {
+            ball.setPos(cc.p(240, 360));
+            ball.setVel(cc.p(0, 0));
+        }, this);
+        var unshrinkAction = cc.scaleTo(0.8, 1, 1).easing(cc.easeBounceOut());
+        ball.userData.sprite.runAction(cc.sequence(waitAction, shrinkAction, moveToCenterAction, unshrinkAction));
+    },
+    
     removeAllBlocksWithSplash: function () {
         for (var i = 0; i < this.blocks.length; i++) {
             if (this.bodiesToRemove.indexOf(this.blocks[i] < 0)) {

@@ -55,7 +55,7 @@ VisualEffectTintLevelObjects = function (gamefield) {
 VisualEffectPauseOverlay = function (gamefield) {
     this.gamefield = gamefield;
     this.overlayDrawNode = new cc.DrawNode();
-    this.overlayDrawNode.drawRect(cc.p(0, 0), cc.p(GameConstants.APP_WIDTH, GameConstants.APP_HEIGHT), cc.color(0, 0, 0, 100), 0, cc.color(0, 0, 0));
+    this.overlayDrawNode.drawRect(cc.p(0, 0), cc.p(GameConstants.APP_WIDTH, GameConstants.APP_HEIGHT), cc.color(0, 0, 0, 100), 0, cc.color(0, 0, 0, 0));
 
     this.show = function () {
         this.gamefield.containerFg.addChild(this.overlayDrawNode);
@@ -63,5 +63,15 @@ VisualEffectPauseOverlay = function (gamefield) {
 
     this.hide = function () {
         this.overlayDrawNode.removeFromParent();
+    }
+};
+
+VisualEffectBackgroundHighlight = function (gamefield) {
+    this.gamefield = gamefield;
+    this.overlayDrawNode = new cc.DrawNode();
+    this.overlayDrawNode.drawRect(cc.p(0, 0), cc.p(GameConstants.APP_WIDTH, GameConstants.APP_HEIGHT), cc.color(255, 255, 255), 0, cc.color(0, 0, 0, 0));
+
+    this.show = function (value) {
+
     }
 };
