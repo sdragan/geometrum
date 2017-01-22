@@ -27,6 +27,7 @@ var GamefieldScene = cc.Scene.extend({
     effectBackgroundHighlight: null,
 
     blocksHitInRow: 0,
+    blocksDestroyedInRow: 0,
     score: 0,
     level: 0,
 
@@ -169,6 +170,7 @@ var GamefieldScene = cc.Scene.extend({
 
     processPaddleHit: function (paddle) {
         this.blocksHitInRow = 0;
+        this.blocksDestroyedInRow = 0;
         Paddle.removePaddle(this);
     },
 
@@ -179,6 +181,11 @@ var GamefieldScene = cc.Scene.extend({
 
     processBlockDestroyed: function (levelObject) {
         this.blocksHitInRow += 1;
+        this.blocksDestroyedInRow += 1;
+
+        if (this.blocksDestroyedInRow >= GameConstants.BLOCKS_DESTROYED_IN_ROW_FOR_HIGHLIGHT) {
+            this.effectBackgroundHighlight.show(this.blocksDestroyedInRow - GameConstants.BLOCKS_DESTROYED_IN_ROW_FOR_HIGHLIGHT + 1);
+        }
         // this.playBlockHitSound();
         this.score += levelObject.score * this.blocksHitInRow;
 

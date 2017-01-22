@@ -86,7 +86,7 @@ var PostLevelMenu = function (gamefield) {
 
     this.retryCallback = function () {
         this.cleanUp();
-        this.gamefield.effectTintLevelObjects.untint();
+        this.gamefield.effectTintLevelObjects.unTint();
         this.gamefield.effectPauseOverlay.hide();
         this.gamefield.resetToMainMenu();
     };

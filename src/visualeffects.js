@@ -47,7 +47,7 @@ VisualEffectTintLevelObjects = function (gamefield) {
         }
     };
 
-    this.untint = function () {
+    this.unTint = function () {
         this.tintAllObjectsTo(255, 255, 255, null);
     }
 };
@@ -68,10 +68,33 @@ VisualEffectPauseOverlay = function (gamefield) {
 
 VisualEffectBackgroundHighlight = function (gamefield) {
     this.gamefield = gamefield;
-    this.overlayDrawNode = new cc.DrawNode();
-    this.overlayDrawNode.drawRect(cc.p(0, 0), cc.p(GameConstants.APP_WIDTH, GameConstants.APP_HEIGHT), cc.color(255, 255, 255), 0, cc.color(0, 0, 0, 0));
+    this.highlightSprite = GameSpriteManager.getSprite("WhiteSquare10");
+    this.highlightSprite.setAnchorPoint(0, 0);
+    this.highlightSprite.setScale(GameConstants.APP_WIDTH / 10, GameConstants.APP_HEIGHT / 10);
+
+    this.HIGHLIGHT_DURATION = 2;
+    this.FADEOUT_DURATION = 1;
 
     this.show = function (value) {
+        var rectAlpha = this.getHighlightAlpha(value);
+        if (this.highlightSprite.parent != this.gamefield.containerFg) {
+            this.gamefield.containerFg.addChild(this.highlightSprite);
+        }
+        this.highlightSprite.stopAllActions();
+        this.highlightSprite.setOpacity(rectAlpha);
 
+        var delayAction = cc.moveBy(this.HIGHLIGHT_DURATION, 0, 0);
+        var fadeOutAction = cc.fadeOut(this.FADEOUT_DURATION);
+        var callFuncAction = cc.callFunc(this.hide, this);
+        this.highlightSprite.runAction(cc.sequence(delayAction, fadeOutAction, callFuncAction));
+    };
+
+    this.hide = function () {
+        this.highlightSprite.removeFromParent();
+    };
+
+    this.getHighlightAlpha = function (value) {
+        var result = value * 10;
+        return Math.min(result, 50);
     }
 };

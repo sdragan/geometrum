@@ -113,5 +113,7 @@ var GameConstants = {
     MIN_BALL_SPEED: 300,
     INITIAL_BALL_VEL_Y: -20,
 
+    BLOCKS_DESTROYED_IN_ROW_FOR_HIGHLIGHT: 3,
+
     SPRITE_NAME_BALL: "NeuBall"
 };
