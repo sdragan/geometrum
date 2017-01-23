@@ -95,8 +95,54 @@ var GameSoundManager = {
 };
 
 var GameParticleManager = {
-    init: function () {
+    explosionParticleSystems: [],
+    explosionParticleSystemIndex: 0,
+    ballPaddleParticleSystem: null,
 
+    init: function () {
+        this.initExplosionSystems();
+        this.ballPaddleParticleSystem = this.explosionParticleSystems[0].clone();
+    },
+
+    initExplosionSystems: function () {
+        var ps = new cc.ParticleSystem(res.particles_plist);
+        this.explosionParticleSystems.push(ps);
+        this.explosionParticleSystems.push(ps.clone());
+        this.explosionParticleSystems.push(ps.clone());
+        for (var i = 0; i < this.explosionParticleSystems.length; i++) {
+            this.explosionParticleSystems[i].setAutoRemoveOnFinish(false);
+        }
+    },
+
+    setParent: function (parent) {
+        this.setExplosionParticlesParent(parent);
+        this.ballPaddleParticleSystem.removeFromParent();
+        parent.addChild(this.ballPaddleParticleSystem);
+    },
+
+    setExplosionParticlesParent: function (parent) {
+        for (var i = 0; i < this.explosionParticleSystems.length; i++) {
+            this.explosionParticleSystems[i].removeFromParent();
+            parent.addChild(this.explosionParticleSystems[i])
+        }
+    },
+
+    displayExplosionParticles: function (position) {
+        this.explosionParticleSystems[this.explosionParticleSystemIndex].setPosition(position.x, position.y);
+        this.explosionParticleSystems[this.explosionParticleSystemIndex].resetSystem();
+        this.explosionParticleSystemIndex++;
+        if (this.explosionParticleSystemIndex >= this.explosionParticleSystems.length) {
+            this.explosionParticleSystemIndex = 0;
+        }
+    },
+
+    displayBallPaddleParticles: function (position) {
+        this.ballPaddleParticleSystem.setPosition(position.x, position.y);
+        this.ballPaddleParticleSystem.resetSystem();
+    },
+
+    reset: function () {
+        this.explosionParticleSystemIndex = 0;
     }
 };
 

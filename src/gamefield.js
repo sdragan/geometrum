@@ -50,6 +50,7 @@ var GamefieldScene = cc.Scene.extend({
         this.initVars();
         this.initLayers();
         this.initEffects();
+        this.initParticles();
         this.initPhysics();
         this.addWalls();
         Paddle.init(this);
@@ -91,6 +92,10 @@ var GamefieldScene = cc.Scene.extend({
         this.effectPauseOverlay = new VisualEffectPauseOverlay(this);
         this.effectTintLevelObjects = new VisualEffectTintLevelObjects(this);
         this.effectBackgroundHighlight = new VisualEffectBackgroundHighlight(this);
+    },
+
+    initParticles: function () {
+        GameParticleManager.setParent(this.containerParticles);
     },
 
     initPhysics: function () {
@@ -154,7 +159,7 @@ var GamefieldScene = cc.Scene.extend({
                 arbiter.b.body.userData.processHit(arbiter.a.body, this);
             }
             else if (levelObjectB.tag == Tags.PADDLE) {
-                this.processPaddleHit(arbiter.b.body, arbiter.a.body);
+                this.processPaddleHit(arbiter.b.body, arbiter.a.body, arbiter);
             }
         }
         else if (levelObjectB.tag == Tags.BALL) {
@@ -162,16 +167,35 @@ var GamefieldScene = cc.Scene.extend({
                 arbiter.a.body.userData.processHit(arbiter.b.body, this);
             }
             else if (levelObjectA.tag == Tags.PADDLE) {
-                this.processPaddleHit(arbiter.a.body, arbiter.b.body);
+                this.processPaddleHit(arbiter.a.body, arbiter.b.body, arbiter);
             }
         }
         return true;
     },
 
-    processPaddleHit: function (paddle) {
+    processPaddleHit: function (paddle, ball, arbiter) {
         this.blocksHitInRow = 0;
         this.blocksDestroyedInRow = 0;
         Paddle.removePaddle(this);
+        this.setDelayedBallPaddleParticles(arbiter.contacts[0].p.x, arbiter.contacts[0].p.y, ball);
+    },
+
+    delayedBallPaddleParticlesParams: null,
+    setDelayedBallPaddleParticles: function (collisionX, collisionY, ball) {
+        this.delayedBallPaddleParticlesParams = {x: collisionX, y: collisionY, ball: ball, ticksLeft: 1};
+    },
+
+    updateDelayedParticles: function () {
+        if (this.delayedBallPaddleParticlesParams != null) {
+            if (this.delayedBallPaddleParticlesParams.ticksLeft > 0) {
+                this.delayedBallPaddleParticlesParams.ticksLeft -= 1;
+            }
+            else {
+                // todo: ball direction
+                GameParticleManager.displayBallPaddleParticles(this.delayedBallPaddleParticlesParams);
+                this.delayedBallPaddleParticlesParams = null;
+            }
+        }
     },
 
     processBlockHit: function (levelObject) {
@@ -219,7 +243,7 @@ var GamefieldScene = cc.Scene.extend({
         var unshrinkAction = cc.scaleTo(0.8, 1, 1).easing(cc.easeBounceOut());
         ball.userData.sprite.runAction(cc.sequence(waitAction, shrinkAction, moveToCenterAction, unshrinkAction));
     },
-    
+
     removeAllBlocksWithSplash: function () {
         for (var i = 0; i < this.blocks.length; i++) {
             if (this.bodiesToRemove.indexOf(this.blocks[i] < 0)) {
@@ -243,6 +267,7 @@ var GamefieldScene = cc.Scene.extend({
         this.updateBalls(dt);
         this.removeMarkedBodies();
         this.addScheduledBodies();
+        this.updateDelayedParticles();
     },
 
     updateBlocks: function (dt) {
