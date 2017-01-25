@@ -136,7 +136,10 @@ var GameParticleManager = {
         }
     },
 
-    displayBallPaddleParticles: function (position) {
+    displayBallPaddleParticles: function (position, angle) {
+        // Cocos' particles rotation is CCW and starts at 3 o'clock. Because fuck you.
+        this.ballPaddleParticleSystem.setAngle(360 - angle - 90);
+        this.ballPaddleParticleSystem.setAngleVar(50);
         this.ballPaddleParticleSystem.setPosition(position.x, position.y);
         this.ballPaddleParticleSystem.resetSystem();
     },

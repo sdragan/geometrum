@@ -192,7 +192,14 @@ var GamefieldScene = cc.Scene.extend({
             }
             else {
                 // todo: ball direction
-                GameParticleManager.displayBallPaddleParticles(this.delayedBallPaddleParticlesParams);
+                var ballVelocity = this.delayedBallPaddleParticlesParams.ball.getVelocity();
+                // get ball rotation from velocity
+                // sin = a / c;
+                // tg = c / b;
+                var ballAngle = MathUtils.radToDeg(Math.atan2(ballVelocity.x, ballVelocity.y));
+                var oppositeAngle = 180 + ballAngle;
+                console.log("angle: " + ballAngle + ", oppositeAngle: " + oppositeAngle);
+                GameParticleManager.displayBallPaddleParticles(this.delayedBallPaddleParticlesParams, oppositeAngle);
                 this.delayedBallPaddleParticlesParams = null;
             }
         }
