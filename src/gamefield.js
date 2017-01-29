@@ -130,6 +130,7 @@ var GamefieldScene = cc.Scene.extend({
         this.preLevelMenu.init();
         Paddle.addListeners();
         Paddle.setPaddleFinishedCallback(this.startFromMainMenu);
+        Paddle.setPaddleMaxY(300);
         this.ballSpeedCallback = function (ball, dt) {
         };
     },
@@ -193,9 +194,8 @@ var GamefieldScene = cc.Scene.extend({
             else {
                 // todo: ball direction
                 var ballVelocity = this.delayedBallPaddleParticlesParams.ball.getVelocity();
-                // get ball rotation from velocity
-                // sin = a / c;
-                // tg = c / b;
+                // var normalizedVelocity = cp.v.normalize(ballVelocity);
+                // this.delayedBallPaddleParticlesParams.ball.userData.sprite.setScale(1 + Math.abs(normalizedVelocity.x), 1 + Math.abs(normalizedVelocity.y));
                 var ballAngle = MathUtils.radToDeg(Math.atan2(ballVelocity.x, ballVelocity.y));
                 var oppositeAngle = 180 + ballAngle;
                 console.log("angle: " + ballAngle + ", oppositeAngle: " + oppositeAngle);
@@ -262,6 +262,10 @@ var GamefieldScene = cc.Scene.extend({
 
     retry: function () {
 
+    },
+
+    isZeroGravity: function () {
+        return this.space.gravity.y == 0;
     },
 
     update: function (dt) {
@@ -485,7 +489,7 @@ var Paddle = {
     isPaddleBeingDrawn: false,
     splashCircle: null,
     gamefield: null,
-
+    paddleMaxY: GameConstants.PADDLE_MAX_Y,
 
     init: function (gamefield) {
         this.touchStartCoords = {x: 0, y: 0};
@@ -501,6 +505,10 @@ var Paddle = {
     },
     removePaddleFinishedCallback: function () {
         this.paddleFinishedCallback = null;
+        Paddle.setPaddleMaxY(GameConstants.PADDLE_MAX_Y);
+    },
+    setPaddleMaxY: function (value) {
+        this.paddleMaxY = value;
     },
 
     addListeners: function () {
@@ -527,7 +535,7 @@ var Paddle = {
     },
 
     processTouchStarted: function (touchX, touchY) {
-        if (touchY <= GameConstants.PADDLE_MAX_Y) {
+        if (touchY <= this.paddleMaxY) {
             this.touchStartCoords.x = touchX;
             this.touchStartCoords.y = touchY;
             this.isPaddleBeingDrawn = true;
@@ -559,8 +567,8 @@ var Paddle = {
             return;
         }
 
-        if (touchY > GameConstants.PADDLE_MAX_Y) {
-            touchY = GameConstants.PADDLE_MAX_Y;
+        if (touchY > this.paddleMaxY) {
+            touchY = this.paddleMaxY;
         }
 
         this.updatePaddleEndCoords(touchX, touchY, this.gamefield);
@@ -609,8 +617,8 @@ var Paddle = {
         this.gamefield.drawNodeTouch.clear();
         this.removeSplashCircle();
 
-        if (touchY > this.PADDLE_MAX_Y) {
-            touchY = this.PADDLE_MAX_Y;
+        if (touchY > this.paddleMaxY) {
+            touchY = this.paddleMaxY;
         }
 
         this.updatePaddleEndCoords(touchX, touchY);
@@ -625,6 +633,7 @@ var Paddle = {
         if (this.paddleFinishedCallback != null) {
             this.paddleFinishedCallback.call(this.gamefield);
             this.removePaddleFinishedCallback();
+            this.paddleMaxY = GameConstants.PADDLE_MAX_Y;
         }
     },
 
