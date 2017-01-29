@@ -293,7 +293,7 @@ var LevelObjectsFactory = {
             body = this.createStaticBody();
         }
         else {
-            var mass = this.MOVABLE_BLOCK_MASS;
+            var mass = Infinity;
             var nodeSize = sprite.getContentSize();
             var momentum = cp.momentForBox(mass, nodeSize.width, nodeSize.height);
             body = this.createNormalBody(space, mass, momentum);
@@ -573,7 +573,7 @@ LevelsBuilder = {
             var level = gamefield.level;
 
             for (var i = 0; i < level; i++) {
-                blocks.push(LevelObjectsFactory.createBlock(Math.random() * 480, Math.random() * 400 + 300, Math.random() * 360, "Block_Normal_1", false, space, container));
+                blocks.push(LevelObjectsFactory.createBlock(100 + 100 * i, Math.random() * 400 + 300, Math.random() * 360, "Block_Normal_1", false, space, container));
                 var moveComponent = new LevelObjectAngularMoveComponent(blocks[blocks.length - 1], Math.random() * 8);
                 blocks[blocks.length - 1].userData.movementComponents.push(moveComponent);
             }
