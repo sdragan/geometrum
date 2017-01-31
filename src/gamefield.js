@@ -100,7 +100,7 @@ var GamefieldScene = cc.Scene.extend({
 
     initPhysics: function () {
         this.space = new cp.Space();
-        this.space.gravity = cp.v(0, 0);
+        this.space.gravity = cp.v(0, -150);
         this.space.iterations = 30;
         this.space.sleepTimeThreshold = Infinity;
         this.space.collisionSlop = Infinity;
@@ -131,8 +131,13 @@ var GamefieldScene = cc.Scene.extend({
         Paddle.addListeners();
         Paddle.setPaddleFinishedCallback(this.startFromMainMenu);
         Paddle.setPaddleMaxY(300);
-        this.ballSpeedCallback = function (ball, dt) {
-        };
+        if (this.isNonZeroGravity()) {
+            this.ballSpeedCallback = this.keepZeroBallSpeed;
+        }
+        else {
+            this.ballSpeedCallback = function (ball, dt) {
+            };
+        }
     },
 
     createBallAtInitialPosition: function () {
@@ -140,10 +145,15 @@ var GamefieldScene = cc.Scene.extend({
     },
 
     setInitialBallVelocity: function () {
-        for (var i = 0; i < this.balls.length; i++) {
-            this.balls[i].setVel(cp.v(0, GameConstants.INITIAL_BALL_VEL_Y));
+        if (this.isNonZeroGravity()) {
+            this.ballSpeedCallback = function (ball, dt) {
+            };
+        } else {
+            for (var i = 0; i < this.balls.length; i++) {
+                this.balls[i].setVel(cp.v(0, GameConstants.INITIAL_BALL_VEL_Y));
+            }
+            this.ballSpeedCallback = this.fadeInBallSpeed;
         }
-        this.ballSpeedCallback = this.fadeInBallSpeed;
     },
 
     collisionHandler: function (arbiter, space) {
@@ -198,8 +208,14 @@ var GamefieldScene = cc.Scene.extend({
                 // this.delayedBallPaddleParticlesParams.ball.userData.sprite.setScale(1 + Math.abs(normalizedVelocity.x), 1 + Math.abs(normalizedVelocity.y));
                 var ballAngle = MathUtils.radToDeg(Math.atan2(ballVelocity.x, ballVelocity.y));
                 var oppositeAngle = 180 + ballAngle;
-                console.log("angle: " + ballAngle + ", oppositeAngle: " + oppositeAngle);
+                // console.log("angle: " + ballAngle + ", oppositeAngle: " + oppositeAngle);
                 GameParticleManager.displayBallPaddleParticles(this.delayedBallPaddleParticlesParams, oppositeAngle);
+
+                if (this.isNonZeroGravity()) {
+                    // todo: check minimal ball speed
+                    this.limitBallVelocityToValues(this.delayedBallPaddleParticlesParams.ball, this.minBallSpeed, 100000);
+                }
+
                 this.delayedBallPaddleParticlesParams = null;
             }
         }
@@ -241,11 +257,15 @@ var GamefieldScene = cc.Scene.extend({
     },
 
     moveBallToScreenCenter: function (ball) {
+        var gamefield = this;
         var waitAction = cc.moveBy(1.5, 0, 0);
         var shrinkAction = cc.scaleTo(0.3, 0, 0).easing(cc.easeQuadraticActionOut());
         var moveToCenterAction = cc.callFunc(function () {
             ball.setPos(cc.p(240, 360));
             ball.setVel(cc.p(0, 0));
+            if (gamefield.isNonZeroGravity()) {
+                gamefield.ballSpeedCallback = gamefield.keepZeroBallSpeed;
+            }
         }, this);
         var unshrinkAction = cc.scaleTo(0.8, 1, 1).easing(cc.easeBounceOut());
         ball.userData.sprite.runAction(cc.sequence(waitAction, shrinkAction, moveToCenterAction, unshrinkAction));
@@ -264,8 +284,8 @@ var GamefieldScene = cc.Scene.extend({
 
     },
 
-    isZeroGravity: function () {
-        return this.space.gravity.y == 0;
+    isNonZeroGravity: function () {
+        return this.space.gravity.y != 0;
     },
 
     update: function (dt) {
@@ -338,22 +358,22 @@ var GamefieldScene = cc.Scene.extend({
     },
 
     limitBallSpeed: function (ball, dt) {
+        this.limitBallVelocityToValues(ball, this.minBallSpeed, 100000);
+    },
+
+    limitBallVelocityToValues: function (ball, min, max) {
         var magnitude = Math.sqrt((ball.getVelocity().x * ball.getVelocity().x) + (ball.getVelocity().y * ball.getVelocity().y));
-        if (magnitude >= this.minBallSpeed) {
-            // return;
+        var targetMagnitude;
+        if (magnitude < min) {
+            targetMagnitude = min;
+        } else if (magnitude > max) {
+            targetMagnitude = max;
+        } else {
+            return;
         }
-        var accelerationPerSecond = 10000;
-        var acceleration = accelerationPerSecond * dt;
-        var targetMagnitude = this.minBallSpeed;
-        var diff = targetMagnitude - magnitude;
-        var newMagnitude = 0;
-        if (diff < acceleration) {
-            newMagnitude = targetMagnitude;
-        }
-        else {
-            newMagnitude = magnitude + acceleration;
-        }
-        ball.setVel(ball.getVelocity().mult(newMagnitude / magnitude));
+        var newVelocity = ball.getVelocity().mult(targetMagnitude / magnitude);
+        // console.log("magnitude: " + magnitude + ", targetMagnitude: " + targetMagnitude + ", newVelocity: " + newVelocity.x, newVelocity.y);
+        ball.setVel(newVelocity);
     },
 
     fadeOutBallSpeed: function (ball, dt) {
@@ -362,7 +382,8 @@ var GamefieldScene = cc.Scene.extend({
             ball.setVel(ball.getVelocity().mult(0));
         }
         else {
-            ball.setVel(ball.getVelocity().mult(0.98));
+            var fadeOutValue = this.isNonZeroGravity() ? 0.9 : 0.98;
+            ball.setVel(ball.getVelocity().mult(fadeOutValue));
         }
     },
 
@@ -375,6 +396,10 @@ var GamefieldScene = cc.Scene.extend({
         else {
             ball.setVel(ball.getVelocity().mult(1.025));
         }
+    },
+
+    keepZeroBallSpeed: function (ball, dt) {
+        ball.setVel(cp.v(0, 0));
     },
 
     ballSlowDownTime: 0,
